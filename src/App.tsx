@@ -1,14 +1,14 @@
 import * as React from "react"
 import {useEffect, useReducer} from "react"
-import {DATA} from "./reducer/data.js"
-import {appReducer, Decision, initialDecisionState} from "./reducer/appReducer"
+import {appReducer, Decision, initialDecisionState} from "./reducer/app-reducer"
 import {History} from "@/components/History"
 import {Button} from "@/components/ui/button"
 import {EpochCounter} from "@/components/EpochCounter"
 import {ActionButtons} from "@/components/ActionButtons"
 import {TradingView} from "@/components/TradingView"
-import {AgentStatus} from "@/components/AgentStatus"
 import {AgentView} from "@/components/AgentView"
+import {PRICE_DATA} from "@/data/price"
+import {NEWS_DATA} from "@/data/news"
 
 const EPOCH_DURATION_MS = 5000
 
@@ -26,14 +26,14 @@ function App() {
 
     const onBuy = () => onAgentAction("BUY")
     const onSell = () => onAgentAction("SELL")
-    const onNoAction = () => onAgentAction("NO ACTION")
+    const onNoAction = () => onAgentAction("HODL")
 
     useEffect(() => {
         const timerId = setTimeout(nextEpoch, EPOCH_DURATION_MS)
         return () => clearTimeout(timerId)
     }, [epoch])
 
-    if (epoch >= DATA.length) {
+    if (epoch >= PRICE_DATA.price_data.length) {
         return (
             <div>
                 <p>Game over</p>
@@ -42,7 +42,10 @@ function App() {
         )
     }
 
-    const marketState = DATA[epoch]
+    const marketState = {
+        price: PRICE_DATA.price_data[epoch - 1].price,
+        tweet: NEWS_DATA[epoch - 1].content,
+    }
 
     return (
         <div className="flex flex-row">

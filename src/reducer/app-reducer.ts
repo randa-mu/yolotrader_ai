@@ -6,7 +6,7 @@ type NewEpochAction = { type: "new_epoch" }
 
 export type AgentDecisionAction = { type: "agent_action", agent: Agent, decision: Decision }
 export type Agent = "human" | "risk" | "liquidity"
-export type Decision = "BUY" | "SELL" | "NO ACTION"
+export type Decision = "BUY" | "SELL" | "HODL"
 
 export function createAgentDecision(agent: Agent, decision: Decision): AgentDecisionAction {
     return {type: "agent_action", agent, decision}
@@ -24,10 +24,10 @@ export type AppState = {
 
 
 const initialCurrent: [string, Decision][] = Object.entries({
-    human: "NO ACTION", risk: "NO ACTION", liquidity: "NO ACTION"
+    human: "HODL", risk: "HODL", liquidity: "HODL"
 })
 export const initialDecisionState = {
-    epoch: 0,
+    epoch: 1,
     current: new Map(initialCurrent),
     balances: {
         company: 10_000,

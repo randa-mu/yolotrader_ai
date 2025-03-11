@@ -1,7 +1,7 @@
 import * as React from "react"
-import {AgentDecisionAction, AppState} from "@/reducer/appReducer"
-import {MarketData} from "@/reducer/data"
+import {AgentDecisionAction, AppState} from "@/reducer/app-reducer"
 import {AgentStatus} from "@/components/AgentStatus"
+import {MarketData} from "@/data/market-data"
 
 type AgentViewProps = {
     state: AppState
