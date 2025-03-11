@@ -1,9 +1,8 @@
-import {OpenAI} from "openai"
+import OpenAI from "openai"
 import {PRICE_DATA} from "@/data/price"
 import {NEWS_DATA} from "@/data/news"
 import {POSITION_DATA} from "@/data/position"
-import * as fs from "node:fs"
-import * as path from "node:path"
+import {TREASURY_POLICY} from "@/data/treasury-policy"
 import {Decision} from "@/reducer/app-reducer"
 
 // Define types for our data structures
@@ -39,7 +38,6 @@ export async function runRiskAnalysis(epoch: number): Promise<RiskAnalysisRespon
     const priceHistory = PRICE_DATA
     const newsHistory = NEWS_DATA
     const positionData = POSITION_DATA
-    const treasuryPolicy = fs.readFileSync(path.join(".", "data", "treasury_policy.md"), "utf8")
 
     const filteredPriceData = priceHistory.price_data.filter((item: PriceVolumeDataPoint) => item.epoch <= epoch)
     const filteredVolumeData = priceHistory.volume_data.filter((item: PriceVolumeDataPoint) => item.epoch <= epoch)
@@ -94,7 +92,7 @@ export async function runRiskAnalysis(epoch: number): Promise<RiskAnalysisRespon
                             order_size: positionData.order_size,
                             price_history: JSON.stringify(filteredPriceHistory),
                             news_history: JSON.stringify(filteredNewsData),
-                            treasury_policy: treasuryPolicy
+                            treasury_policy: TREASURY_POLICY
                         })
                     })
                 }
