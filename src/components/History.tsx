@@ -1,16 +1,22 @@
 import * as React from "react"
 import {Decision} from "@/reducer/app-reducer"
-import {IndicatorIcon} from "@/components/Indicators"
+import {IndicatorIcon} from "@/components/IndicatorIcon"
 
 type HistoryProps = {
     history: Array<Map<string, Decision>>
 }
 export const History = (props: HistoryProps) => {
     return (
-        <>
+        <div className="min-w-80">
             <h1 className="text-3xl font-extrabold">History</h1>
-            {props.history.map((decision, index) => <EpochHistory decision={decision} epoch={index}/>)}
-        </>
+            <div className="grid grid-cols-4 w-max justify-center">
+                <div className="font-extrabold">Epoch</div>
+                <div className="font-extrabold">Human</div>
+                <div className="font-extrabold">Liquidity</div>
+                <div className="font-extrabold">Risk</div>
+                {props.history.map((decision, index) => <EpochHistory decision={decision} epoch={index}/>)}
+            </div>
+        </div>
     )
 }
 
@@ -20,21 +26,12 @@ type EpochHistoryProps = {
 }
 export const EpochHistory = (props: EpochHistoryProps) => {
     return (
-        <div className="inline-flex flex-row gap-2 w-max justify-center">
-            <div><h2 className="font-extrabold">Epoch {props.epoch}</h2></div>
-            <div>Human</div>
-            <div>{
-                <IndicatorIcon value={props.decision.get("human")}/>
-            }</div>
-            <div>Liquidity</div>
-            <div>{
-                <IndicatorIcon value={props.decision.get("liquidity")}/>
-            }</div>
-            <div>Risk</div>
-            <div>{
-                <IndicatorIcon value={props.decision.get("risk")}/>
-            }</div>
-        </div>
+        <>
+            <div><p>{props.epoch}</p></div>
+            <div>{<IndicatorIcon value={props.decision.get("human")}/>}</div>
+            <div>{<IndicatorIcon value={props.decision.get("liquidity")}/>}</div>
+            <div>{<IndicatorIcon value={props.decision.get("risk")}/>}</div>
+        </>
     )
 }
 

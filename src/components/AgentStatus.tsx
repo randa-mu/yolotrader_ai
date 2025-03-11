@@ -1,7 +1,7 @@
 import * as React from "react"
 import {Agent, AgentDecisionAction, AppState, createAgentDecision, Decision} from "@/reducer/app-reducer"
 import {useEffect, useState} from "react"
-import {IndicatorIcon} from "@/components/Indicators"
+import {IndicatorIcon} from "@/components/IndicatorIcon"
 import {runRiskAnalysis} from "@/index"
 import {MarketData} from "@/data/market-data"
 

@@ -27,19 +27,19 @@ export const ActionButtons = (props: ActionButtonsProps) => {
                     onClick={choiceMadeMixin(props.onSell)}
                     disabled={choiceMade}
                 >
-                    Sell 1000
+                    ❌ Sell 1000
                 </Button>
                 <Button
                     onClick={choiceMadeMixin(props.onNoAction)}
                     disabled={choiceMade}
                 >
-                    HODL
+                    🤝 HODL
                 </Button>
                 <Button
                     onClick={choiceMadeMixin(props.onBuy)}
                     disabled={choiceMade}
                 >
-                    Buy 1000
+                    ✅ Buy 1000
                 </Button>
             </div>
             <div>

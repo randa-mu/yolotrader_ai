@@ -58,11 +58,13 @@ function App() {
 
     return (
         <div>
-            <h1 className="text-7xl font-extrabold m-10">yolotrader-ai</h1>
+            <div className="absolute left-0 top-0 m-2">
+                <EpochCounter epoch={epoch} msPerEpoch={EPOCH_DURATION_MS}/>
+            </div>
+            <div className="flex-10/12">
+                <h1 className=" text-7xl font-extrabold m-10">yolotrader-ai</h1>
+            </div>
             <div className="flex flex-row">
-                <div className="flex-1/8">
-                    <EpochCounter epoch={epoch} msPerEpoch={EPOCH_DURATION_MS}/>
-                </div>
                 <div className="flex-3/4">
                     <TradingView
                         state={appState}
