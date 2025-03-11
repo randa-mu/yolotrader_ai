@@ -48,31 +48,34 @@ function App() {
     }
 
     return (
-        <div className="flex flex-row">
-            <div className="flex-1/8">
-                <EpochCounter epoch={epoch} msPerEpoch={EPOCH_DURATION_MS}/>
-            </div>
-            <div className="flex-3/4">
-                <TradingView
-                    state={appState}
-                    marketState={marketState}
-                />
-                <AgentView
-                    state={appState}
-                    marketState={marketState}
-                    onAgentDecision={appDispatch}
-                />
-                <ActionButtons
-                    epoch={epoch}
-                    onBuy={onBuy}
-                    onSell={onSell}
-                    onNoAction={onNoAction}
-                />
+        <div>
+            <h1 className="text-7xl font-extrabold">yolotrader-ai</h1>
+            <div className="flex flex-row">
+                <div className="flex-1/8">
+                    <EpochCounter epoch={epoch} msPerEpoch={EPOCH_DURATION_MS}/>
+                </div>
+                <div className="flex-3/4">
+                    <TradingView
+                        state={appState}
+                        marketState={marketState}
+                    />
+                    <AgentView
+                        state={appState}
+                        marketState={marketState}
+                        onAgentDecision={appDispatch}
+                    />
+                    <ActionButtons
+                        epoch={epoch}
+                        onBuy={onBuy}
+                        onSell={onSell}
+                        onNoAction={onNoAction}
+                    />
 
-            </div>
+                </div>
 
-            <div className="flex-1/8">
-                <History history={appState.history}/>
+                <div className="flex-1/8">
+                    <History history={appState.history}/>
+                </div>
             </div>
         </div>
     )
