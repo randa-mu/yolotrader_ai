@@ -70,23 +70,25 @@ function App() {
                         state={appState}
                         marketState={marketState}
                     />
-                    <AgentView
-                        state={appState}
-                        marketState={marketState}
-                        onAgentDecision={appDispatch}
-                    />
-                    <ActionButtons
-                        epoch={epoch}
-                        onBuy={onBuy}
-                        onSell={onSell}
-                        onNoAction={onNoAction}
-                    />
-
                 </div>
-
-                <div className="flex-1/8">
-                    <History history={appState.history}/>
-                </div>
+                {/* spacer to make things look nicer */}
+                <div className="flex-1/4"> </div>
+            </div>
+            <div className="absolute right-0 top-0 m-2">
+                <History history={appState.history}/>
+            </div>
+            <div>
+                <AgentView
+                    state={appState}
+                    marketState={marketState}
+                    onAgentDecision={appDispatch}
+                />
+                <ActionButtons
+                    epoch={epoch}
+                    onBuy={onBuy}
+                    onSell={onSell}
+                    onNoAction={onNoAction}
+                />
             </div>
         </div>
     )
