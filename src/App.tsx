@@ -42,6 +42,15 @@ function App() {
         )
     }
 
+    if (appState.balances.company <= 0) {
+        return (
+            <div>
+                <p>Your company went broke! Great trading...</p>
+                <Button onClick={restart}>Restart</Button>
+            </div>
+        )
+    }
+
     const marketState = {
         price: PRICE_DATA.price_data[epoch - 1].price,
         tweet: NEWS_DATA[epoch - 1].content,
