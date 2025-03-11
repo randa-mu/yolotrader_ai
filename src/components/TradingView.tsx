@@ -24,7 +24,7 @@ export const TradingView = (props: TradingViewProps) => {
             <div className="grid grid-cols-4 gap-1 text-left">
                 <div className="font-extrabold">Tweet</div>
                 <div className="col-span-3">{tweet}</div>
-                <div className="font-extrabold">/app-reducerce</div>
+                <div className="font-extrabold">Company balance</div>
                 <div className="col-span-3">{company}</div>
                 <div className="font-extrabold">Order book balance</div>
                 <div className="col-span-3">{orderBook}</div>

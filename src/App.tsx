@@ -36,7 +36,7 @@ function App() {
     if (epoch >= PRICE_DATA.price_data.length) {
         return (
             <div>
-                <p>Game over</p>
+                <p>Game over - your portfolio balance was {appState.balances.orderBook}</p>
                 <Button onClick={restart}>Restart</Button>
             </div>
         )
@@ -58,7 +58,7 @@ function App() {
 
     return (
         <div>
-            <h1 className="text-7xl font-extrabold">yolotrader-ai</h1>
+            <h1 className="text-7xl font-extrabold m-10">yolotrader-ai</h1>
             <div className="flex flex-row">
                 <div className="flex-1/8">
                     <EpochCounter epoch={epoch} msPerEpoch={EPOCH_DURATION_MS}/>
