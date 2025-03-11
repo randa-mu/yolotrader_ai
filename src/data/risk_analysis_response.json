@@ -1,0 +1,43 @@
+{
+    "name": "risk_analysis",
+    "strict": true,
+    "schema": {
+      "type": "object",
+      "properties": {
+        "action_recomendation": {
+          "type": "string",
+          "description": "The recommended market action based on analysis.",
+          "enum": [
+            "BUY",
+            "SELL",
+            "HODL"
+          ]
+        },
+        "policy_categories": {
+          "type": "array",
+          "description": "Policy categories which influenced the action recomendation.",
+          "items": {
+            "type": "string",
+            "enum": [
+              "Volatillity",
+              "Speculative Sentiment",
+              "Low Liquidity",
+              "Position Sizing",
+              "Market Manipulation",
+              "Long Term Viability"
+            ]
+          }
+        },
+        "decision_reason": {
+          "type": "string",
+          "description": "A short 2 sentence, emoji laden explanation of why policy violations, market data, news or position sizing resulted in the decision taken."
+        }
+      },
+      "required": [
+        "action_recomendation",
+        "policy_categories",
+        "decision_reason"
+      ],
+      "additionalProperties": false
+    }
+  }

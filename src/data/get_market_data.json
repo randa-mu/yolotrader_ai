@@ -1,0 +1,43 @@
+{
+    "name": "get_market_data",
+    "description": "Get market daata",
+    "strict": true,
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "treasury_balance": {
+          "type": "number",
+          "description": "The current available balance in the treasury"
+        },
+        "position": {
+          "type": "number",
+          "description": "Our current position on this token"
+        },
+        "order_size": {
+          "type": "number",
+          "description": "The order size for a transaction"
+        },
+        "price_history": {
+          "type": "string",
+          "description": "Historic token price up to the current epoch"
+        },
+        "news_history": {
+          "type": "string",
+          "description": "Historic market news up to the current epoch"
+        },
+        "treasury_policy": {
+          "type": "string",
+          "description": "The treasury policy guidelines to guide your risk analysis and decision making"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "treasury_balance",
+        "position",
+        "order_size",
+        "price_history",
+        "news_history",
+        "treasury_policy"
+      ]
+    }
+  }
