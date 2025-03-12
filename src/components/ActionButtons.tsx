@@ -1,6 +1,7 @@
 import * as React from "react"
 import {useEffect, useState} from "react"
 import {Button} from "@/components/ui/button"
+import {APP_CONFIG} from "@/config"
 
 type ActionButtonsProps = {
     epoch: number
@@ -27,7 +28,7 @@ export const ActionButtons = (props: ActionButtonsProps) => {
                     onClick={choiceMadeMixin(props.onSell)}
                     disabled={choiceMade}
                 >
-                    ❌ Sell 1000
+                    ❌ Sell {APP_CONFIG.orderSize}
                 </Button>
                 <Button
                     onClick={choiceMadeMixin(props.onNoAction)}
@@ -39,7 +40,7 @@ export const ActionButtons = (props: ActionButtonsProps) => {
                     onClick={choiceMadeMixin(props.onBuy)}
                     disabled={choiceMade}
                 >
-                    ✅ Buy 1000
+                    ✅ Buy {APP_CONFIG.orderSize}
                 </Button>
             </div>
             <div>

@@ -2,7 +2,6 @@ import OpenAI from "openai"
 import {Run, Thread} from "openai/resources/beta/threads"
 import {PRICE_DATA} from "@/data/price"
 import {NEWS_DATA} from "@/data/news"
-import {TREASURY_POLICY} from "@/data/treasury-policy"
 import {AppState, Decision} from "@/reducer/app-reducer"
 import {APP_CONFIG} from "@/config"
 
@@ -38,7 +37,7 @@ const openai = new OpenAI({
 
 const ASSISTANT_ID = import.meta.env.VITE_OPENAI_ASSISTANT_ID
 
-export async function runRiskAnalysis(state: AppState): Promise<RiskAnalysis> {
+export async function runRiskAnalysis(state: AppState, treasuryPolicy: string): Promise<RiskAnalysis> {
     const thread = await openai.beta.threads.create()
     await openai.beta.threads.messages.create(thread.id, {
         role: "user",
@@ -57,7 +56,7 @@ export async function runRiskAnalysis(state: AppState): Promise<RiskAnalysis> {
         ]
     })
 
-    await waitForRun(thread, run.id, state)
+    await waitForRun(thread, run.id, state, treasuryPolicy)
 
     const json = await extractLatestResponse(thread)
     if (json === "") {
@@ -72,7 +71,7 @@ export async function runRiskAnalysis(state: AppState): Promise<RiskAnalysis> {
     }
 }
 
-async function waitForRun(thread: Thread, runId: string, state: AppState): Promise<void> {
+async function waitForRun(thread: Thread, runId: string, state: AppState, treasuryPolicy: string): Promise<void> {
     let runs = 0
     while (runs < APP_CONFIG.inferenceRetries) {
         const run = await openai.beta.threads.runs.retrieve(thread.id, runId)
@@ -86,7 +85,7 @@ async function waitForRun(thread: Thread, runId: string, state: AppState): Promi
         }
 
         if (run.status === "requires_action" && run.required_action?.submit_tool_outputs) {
-            await submitToolOutput(thread, run, state)
+            await submitToolOutput(thread, run, state, treasuryPolicy)
         }
 
         runs++
@@ -96,7 +95,7 @@ async function waitForRun(thread: Thread, runId: string, state: AppState): Promi
     throw new Error(`failed to infer risk after ${APP_CONFIG.inferenceRetries} tries for epoch ${state.epoch}`)
 }
 
-async function submitToolOutput(thread: Thread, run: Run, state: AppState): Promise<void> {
+async function submitToolOutput(thread: Thread, run: Run, state: AppState, treasuryPolicy: string): Promise<void> {
     const {epoch, balances} = state
     const {treasury, orderBook} = balances
     const toolCalls = run.required_action.submit_tool_outputs.tool_calls
@@ -119,7 +118,6 @@ async function submitToolOutput(thread: Thread, run: Run, state: AppState): Prom
     }
 
     const toolOutputs = []
-
     for (const toolCall of toolCalls) {
         if (toolCall.function.name === "get_market_data") {
             toolOutputs.push({
@@ -130,7 +128,7 @@ async function submitToolOutput(thread: Thread, run: Run, state: AppState): Prom
                     order_size: APP_CONFIG.orderSize,
                     price_history: JSON.stringify(filteredPriceHistory),
                     news_history: JSON.stringify(filteredNewsData),
-                    treasury_policy: TREASURY_POLICY
+                    treasury_policy: treasuryPolicy,
                 })
             })
         }

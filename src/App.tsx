@@ -9,6 +9,7 @@ import {TradingView} from "@/components/TradingView"
 import {AgentView} from "@/components/AgentView"
 import {PRICE_DATA} from "@/data/price"
 import {NEWS_DATA} from "@/data/news"
+import {APP_CONFIG} from "@/config"
 
 const EPOCH_DURATION_MS = 15000
 
@@ -36,7 +37,7 @@ function App() {
     if (epoch >= PRICE_DATA.price_data.length) {
         return (
             <div>
-                <p>Game over - your portfolio balance was {appState.balances.orderBook}</p>
+                <p>Game over - your portfolio balance was {appState.balances.orderBook} {APP_CONFIG.token}</p>
                 <Button onClick={restart}>Restart</Button>
             </div>
         )
