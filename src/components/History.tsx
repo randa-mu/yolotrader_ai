@@ -6,15 +6,25 @@ type HistoryProps = {
     history: Array<Map<string, Decision>>
 }
 export const History = (props: HistoryProps) => {
+    if (props.history.length === 0) {
+        return (
+            <div className="flex flex-col space-y-2 justify-center p-2">
+                <h1 className="text-3xl font-extrabold">History</h1>
+                <p>Waiting for decisions...</p>
+            </div>
+        )
+    }
+    const reversedHistory = props.history.map((decision, index) => ({ decision, epoch: index})).toReversed()
     return (
-        <div className="min-w-80">
+        <div className="flex flex-col space-y-2 justify-center p-2">
             <h1 className="text-3xl font-extrabold">History</h1>
-            <div className="grid grid-cols-4 w-max justify-center">
+
+            <div className="grid grid-cols-4 justify-center overflow-scroll">
                 <div className="font-extrabold">Epoch</div>
                 <div className="font-extrabold">Human</div>
                 <div className="font-extrabold">Liquidity</div>
                 <div className="font-extrabold">Risk</div>
-                {props.history.map((decision, index) => <EpochHistory decision={decision} epoch={index}/>)}
+                {reversedHistory.map(({ decision, epoch}) => <EpochHistory decision={decision} epoch={epoch}/>)}
             </div>
         </div>
     )

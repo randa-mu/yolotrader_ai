@@ -3,6 +3,7 @@
 Manage your treasury while ensuring your junior employees can't break the bank!
 
 ## Quickstart
+- go to https://platform.openai.com/account/limits and add some balance to your openAPI account (note: this is separate from a chatGPT subscription!)
 - go to https://platform.openai.com/assistants and create an assistant
   - use the [system instructions](./src/data/system_instructions.md)
   - add a new function using the contents of [get_market_data.json](./src/data/get_market_data.json) 

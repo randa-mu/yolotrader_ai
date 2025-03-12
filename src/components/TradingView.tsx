@@ -1,33 +1,27 @@
 import * as React from "react"
-import {useEffect, useState} from "react"
 import {CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from "recharts"
 import {AppState} from "@/reducer/app-reducer"
-import {MarketData} from "@/data/market-data"
+import {APP_CONFIG} from "@/config"
 
 type TradingViewProps = {
     state: AppState
-    marketState: MarketData
+    priceData: Array<number>
+    sentimentData: Array<string>
 }
 export const TradingView = (props: TradingViewProps) => {
-    const {company, orderBook} = props.state.balances
-    const {tweet} = props.marketState
-
-    const [priceData, setPriceData] = useState([])
-
-    useEffect(() => {
-        setPriceData([...priceData, props.marketState.price])
-    }, [props.marketState])
+    const {treasury, orderBook} = props.state.balances
+    const tweet = props.sentimentData[props.sentimentData.length - 1] ?? ""
 
     return (
         <div>
-            <PriceChart priceData={priceData}/>
+            <PriceChart priceData={props.priceData}/>
             <div className="grid grid-cols-4 gap-1 text-left">
                 <div className="font-extrabold">Tweet</div>
                 <div className="col-span-3">{tweet}</div>
                 <div className="font-extrabold">Company balance</div>
-                <div className="col-span-3">{company}</div>
+                <div className="col-span-3">{APP_CONFIG.token} {treasury.toLocaleString()}</div>
                 <div className="font-extrabold">Order book balance</div>
-                <div className="col-span-3">{orderBook}</div>
+                <div className="col-span-3">{APP_CONFIG.token} {orderBook}</div>
             </div>
         </div>
     )

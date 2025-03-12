@@ -1,27 +1,27 @@
 import * as React from "react"
-import {Agent, AgentDecisionAction, AppState, createAgentDecision, Decision} from "@/reducer/app-reducer"
 import {useEffect, useState} from "react"
 import {IndicatorIcon} from "@/components/IndicatorIcon"
-import {runRiskAnalysis} from "@/index"
-import {MarketData} from "@/data/market-data"
+import {runRiskAnalysis} from "@/lib/risk"
+import {Agent, AgentDecisionAction, AppState, createAgentDecision, Decision} from "@/reducer/app-reducer"
 
 type AgentStatusProps = {
     agent: Agent
-    state: AppState
-    marketState: MarketData
+    appState: AppState
+    priceData: Array<number>
+    marketSentimentData: Array<string>
     onAgentDecision: (agent: AgentDecisionAction) => unknown
 }
 export const AgentStatus = (props: AgentStatusProps) => {
-    const {epoch} = props.state
+    const {epoch} = props.appState
     const [isLoading, setLoading] = useState(true)
 
     useEffect(() => {
         const randomLatency = Math.random() * 4000
         if (props.agent === "risk") {
             setLoading(true)
-            runRiskAnalysis(epoch)
+            runRiskAnalysis(props.appState)
                 .then(risk =>
-                    props.onAgentDecision(createAgentDecision(props.agent, risk.action_recomendation))
+                    props.onAgentDecision(createAgentDecision(props.agent, risk.decision))
                 )
                 .finally(() => setLoading(false))
 
@@ -39,12 +39,15 @@ export const AgentStatus = (props: AgentStatusProps) => {
 
     const cleanName = props.agent.charAt(0).toUpperCase() + props.agent.slice(1).toLowerCase()
     return (
-        <div className="flex flex-row space-x-2 p-2">
-            <div className="font-extrabold">{cleanName} agent:</div>
+        <div className="grid grid-cols-2 space-x-2 p-2 min-h-20 min-w-20 text-center align-middle">
+            <div className="text-2xl font-extrabold align-middle text-center">{cleanName}</div>
             <div>
                 {isLoading
                     ? <LoadingSpinner/>
-                    : <IndicatorIcon value={props.state.current.get(props.agent)}/>
+                    : <IndicatorIcon
+                        size="large"
+                        value={props.appState.current.get(props.agent)}
+                    />
                 }
             </div>
         </div>
@@ -63,5 +66,10 @@ function randomDecision(): Decision {
 }
 
 function LoadingSpinner() {
-    return <div className="w-8 h-8 border-4 border-gray-300 border-t-gray-900 rounded-full animate-spin"></div>
+    return (
+        <div className="flex justify-center">
+            <div className="w-8 h-8 border-4 border-gray-300 border-t-gray-900 rounded-full animate-spin"></div>
+        </div>
+    )
+
 }

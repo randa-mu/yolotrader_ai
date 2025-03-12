@@ -1,3 +1,5 @@
+import {APP_CONFIG} from "@/config"
+
 type AppAction = RestartAction | NewEpochAction | AgentDecisionAction
 
 type RestartAction = { type: "restart" }
@@ -15,7 +17,7 @@ export function createAgentDecision(agent: Agent, decision: Decision): AgentDeci
 export type AppState = {
     epoch: number
     balances: {
-        company: number,
+        treasury: number,
         orderBook: number
     }
     current: Map<string, Decision>
@@ -30,7 +32,7 @@ export const initialDecisionState = {
     epoch: 1,
     current: new Map(initialCurrent),
     balances: {
-        company: 10_000,
+        treasury: APP_CONFIG.treasuryStartingBalance,
         orderBook: 0,
     },
     history: []
@@ -56,7 +58,7 @@ export const appReducer = (state: AppState, action: AppAction) => {
 }
 
 type Balances = {
-    company: number,
+    treasury: number,
     orderBook: number
 }
 
@@ -79,10 +81,10 @@ function calculateNextBalances(decisions: Map<string, Decision>, currentBalances
     })
 
     if (buys >= 2) {
-        return {company: currentBalances.company - 1000, orderBook: currentBalances.orderBook + 1000}
+        return {treasury: currentBalances.treasury - APP_CONFIG.orderSize, orderBook: currentBalances.orderBook + APP_CONFIG.orderSize}
     }
     if (sells >= 2) {
-        return {company: currentBalances.company + 1000, orderBook: currentBalances.orderBook - 1000}
+        return {treasury: currentBalances.treasury + APP_CONFIG.orderSize, orderBook: currentBalances.orderBook - APP_CONFIG.orderSize}
     }
 
     return currentBalances

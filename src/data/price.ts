@@ -12,7 +12,6 @@ export type VolumeData = {
     volume: number
 }
 export const PRICE_DATA = {
-    "token": "MOONCOIN",
     "price_data": [
         {"epoch": 1, "price": 1.00},
         {"epoch": 2, "price": 1.15},

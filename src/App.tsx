@@ -10,7 +10,7 @@ import {AgentView} from "@/components/AgentView"
 import {PRICE_DATA} from "@/data/price"
 import {NEWS_DATA} from "@/data/news"
 
-const EPOCH_DURATION_MS = 5000
+const EPOCH_DURATION_MS = 15000
 
 function App() {
     const [appState, appDispatch] = useReducer(appReducer, initialDecisionState)
@@ -42,7 +42,7 @@ function App() {
         )
     }
 
-    if (appState.balances.company <= 0) {
+    if (appState.balances.treasury <= 0) {
         return (
             <div>
                 <p>Your company went broke! Great trading...</p>
@@ -51,10 +51,13 @@ function App() {
         )
     }
 
-    const marketState = {
-        price: PRICE_DATA.price_data[epoch - 1].price,
-        tweet: NEWS_DATA[epoch - 1].content,
-    }
+    const priceData = PRICE_DATA.price_data
+        .filter(it => it.epoch <= epoch)
+        .map(it => it.price)
+
+    const sentimentData = NEWS_DATA
+        .filter(it => it.epoch <= epoch)
+        .map(it => it.content)
 
     return (
         <div>
@@ -68,21 +71,27 @@ function App() {
                 <div className="flex-3/4">
                     <TradingView
                         state={appState}
-                        marketState={marketState}
+                        priceData={priceData}
+                        sentimentData={sentimentData}
                     />
                 </div>
                 {/* spacer to make things look nicer */}
-                <div className="flex-1/4"> </div>
+                <div className="flex-1/4"></div>
             </div>
-            <div className="absolute right-0 top-0 m-2">
-                <History history={appState.history}/>
+            <div className="absolute right-0 top-0 m-2 h-full w-1/4 flex flex-col align-center">
+                <div className="w-full h-1/2">
+                    <History history={appState.history}/>
+                </div>
+                <div className="w-full h-1/2">
+                    <AgentView
+                        state={appState}
+                        priceData={priceData}
+                        marketSentimentData={sentimentData}
+                        onAgentDecision={appDispatch}
+                    />
+                </div>
             </div>
             <div>
-                <AgentView
-                    state={appState}
-                    marketState={marketState}
-                    onAgentDecision={appDispatch}
-                />
                 <ActionButtons
                     epoch={epoch}
                     onBuy={onBuy}

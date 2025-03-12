@@ -1,15 +1,19 @@
 import * as React from "react"
 import {Decision} from "@/reducer/app-reducer"
 
-export type IconProps = { value: Decision }
+export type IconProps = {
+    size?: "small" | "large"
+    value: Decision
+}
 
 export function IndicatorIcon(props: IconProps) {
+    const className = props.size === "large" ? "text-4xl" : ""
     switch (props.value) {
         case "BUY":
-            return <p>✅</p>
+            return <p className={className}>✅</p>
         case "SELL":
-            return <p>❌</p>
+            return <p className={className}>❌</p>
         default:
-            return <p>🤝</p>
+            return <p className={className}>🤝</p>
     }
 }
