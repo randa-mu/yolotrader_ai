@@ -34,13 +34,29 @@ type PriceChartProps = {
 function PriceChart(props: PriceChartProps) {
     const remappedData = props.priceData.map((price, index) => ({name: `${index}`, value: price}))
     return (
-        <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={remappedData} margin={{top: 10, right: 30, left: 0, bottom: 10}}>
+        <ResponsiveContainer
+            width="100%"
+            height={300}
+        >
+            <LineChart
+                data={remappedData}
+                margin={{top: 10, right: 30, left: 0, bottom: 10}}
+            >
                 <CartesianGrid strokeDasharray="3 3"/>
-                <XAxis label="Epoch"/>
-                <YAxis label="Price"/>
+                <XAxis
+                    label="Epoch"
+                />
+                <YAxis
+                    label="Price"
+                />
                 <Tooltip/>
-                <Line type="monotone" dataKey="value" stroke="#8884d8" strokeWidth={2} dot={{r: 4}}/>
+                <Line
+                    type="monotone"
+                    dataKey="value"
+                    stroke="#8884d8"
+                    strokeWidth={2}
+                    dot={{r: 4}}
+                />
             </LineChart>
         </ResponsiveContainer>
     )

@@ -4,4 +4,5 @@ export const APP_CONFIG = {
     treasuryStartingBalance: 10_000_000,
     token: "MOON",
     inferenceRetries: 10,
+    minimumPriceChartEpochs: 5
 }
