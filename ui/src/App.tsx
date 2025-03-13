@@ -10,6 +10,7 @@ import {AgentView} from "@/components/AgentView"
 import {PRICE_DATA} from "@/data/price"
 import {NEWS_DATA} from "@/data/news"
 import {APP_CONFIG} from "@/config"
+import {signTransfer, testSigning} from "@/lib/signing"
 
 const EPOCH_DURATION_MS = 15000
 
@@ -33,6 +34,13 @@ function App() {
         const timerId = setTimeout(nextEpoch, EPOCH_DURATION_MS)
         return () => clearTimeout(timerId)
     }, [epoch])
+
+    useEffect(() => {
+        console.log("WTF")
+        testSigning()
+            .then(() => console.log("done"))
+            .catch(err => console.error(err))
+    }, [])
 
     if (epoch >= PRICE_DATA.price_data.length) {
         return (

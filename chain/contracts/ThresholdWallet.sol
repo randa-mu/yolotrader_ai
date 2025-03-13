@@ -30,4 +30,8 @@ contract ThresholdWallet {
 
         emit Transfer(address(this), recipient, amount);
     }
+
+    fallback() external payable {}
+
+    receive() external payable {}
 }

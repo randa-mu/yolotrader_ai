@@ -32,7 +32,7 @@ contract ThresholdWalletTest is Test {
 
         assertTrue(address(wallet).balance == 10 ether, "balance incorrect");
         wallet.transfer(recipient, 1 ether, validSignature);
-        console.log(address(wallet).balance);
-        assertTrue(address(wallet).balance == 9 ether, "balance incorrect");
+        assertTrue(address(wallet).balance == 9 ether, "contract balance incorrect");
+        assertTrue(recipient.balance == 1 ether, "recipient balance incorrect");
     }
 }

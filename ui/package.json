@@ -4,18 +4,22 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "generate": "npx typechain --target ethers-v6 --out-dir src/generated '../chain/out/ThresholdWallet.sol/ThresholdWallet.json'",
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@noble/curves": "^1.8.1",
     "@radix-ui/react-popover": "^1.1.6",
     "@radix-ui/react-slot": "^1.1.2",
     "@tailwindcss/vite": "^4.0.12",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "ethers": "^6.13.5",
     "lucide-react": "^0.479.0",
+    "mcl-wasm": "^1.8.0",
     "openai": "^4.86.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -26,6 +30,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
+    "@typechain/ethers-v6": "^0.5.1",
     "@types/node": "^22.13.10",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
