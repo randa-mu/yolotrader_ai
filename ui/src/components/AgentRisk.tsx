@@ -3,26 +3,28 @@ import {useCallback, useEffect, useState} from "react"
 import {AgentCard} from "@/components/AgentCard"
 import {IndicatorIcon} from "@/components/IndicatorIcon"
 import {runRiskAnalysis} from "@/lib/risk"
-import {AgentDecisionAction, AppState, createAgentDecision} from "@/reducer/app-reducer"
+import {AgentDecisionAction, AppState, createAgentDecision} from "@/state/app-reducer"
 import {TREASURY_POLICY} from "@/data/treasury-policy"
 import {Textarea} from "@/components/ui/textarea"
 import {Button} from "@/components/ui/button"
+import {ChainState} from "@/state/chain-reducer"
 
 type AgentRiskProps = {
     appState: AppState
+    chainState: ChainState
     priceData: Array<number>
     marketSentimentData: Array<string>
     onAgentDecision: (agent: AgentDecisionAction) => unknown
 }
 export const AgentRisk = (props: AgentRiskProps) => {
-    const {epoch} = props.appState
+    const {epoch} = props.chainState
     const [isLoading, setLoading] = useState(true)
     const [reasoning, setReasoning] = useState("")
     const [treasuryPolicy, setTreasuryPolicy] = useState(TREASURY_POLICY)
     const [stagedPolicy, setStagedPolicy] = useState(TREASURY_POLICY)
 
     const analyseRisk = useCallback(async () => {
-        const risk = await runRiskAnalysis(props.appState, treasuryPolicy)
+        const risk = await runRiskAnalysis(props.chainState, treasuryPolicy)
         props.onAgentDecision(createAgentDecision("risk", risk.decision))
         setReasoning(risk.reason)
     }, [props.onAgentDecision, props.appState, treasuryPolicy])

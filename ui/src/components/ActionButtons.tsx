@@ -4,7 +4,7 @@ import {Button} from "@/components/ui/button"
 import {APP_CONFIG} from "@/config"
 
 type ActionButtonsProps = {
-    epoch: number
+    epoch: bigint
     onSell: () => any
     onNoAction: () => any
     onBuy: () => any

@@ -8,8 +8,8 @@ echo "[+] Compiling contracts..."
 forge build
 DEPLOYMENT_SCRIPTS=$(find scripts/ -name "*.s.sol")
 
-# Start Anvil with a 3-second block time
-anvil --block-time 3 &> anvil.log &
+# Start Anvil with a 15-second block time
+anvil --block-time 15 &> anvil.log &
 ANVIL_PID=$!
 echo "[+] Anvil started with PID $ANVIL_PID"
 
@@ -30,7 +30,7 @@ echo "[+] Deploying contracts..."
 PRIVATE_KEY="0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80" # Default Anvil key
 for FILE in $DEPLOYMENT_SCRIPTS; do
   printf "\t[+] Running script %s...\n" "$(basename "$FILE")"
-  forge script "$FILE" --slow --multi --broadcast --private-key $PRIVATE_KEY --rpc-url http://localhost:8545 &>/dev/null
+  forge script "$FILE" --slow --multi --broadcast --private-key $PRIVATE_KEY --rpc-url http://localhost:8545
 done
 
 EXPLORER_PORT=5100

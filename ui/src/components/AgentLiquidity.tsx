@@ -1,5 +1,5 @@
 import * as React from "react"
-import {AgentDecisionAction, AppState, createAgentDecision, Decision} from "@/reducer/app-reducer"
+import {AgentDecisionAction, AppState, createAgentDecision, Decision} from "@/state/app-reducer"
 import {IndicatorIcon} from "@/components/IndicatorIcon"
 import {useEffect, useState} from "react"
 import {LoadingSpinner} from "@/components/ui/LoadingSpinner"

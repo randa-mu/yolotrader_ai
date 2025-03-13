@@ -1,15 +1,17 @@
 import * as React from "react"
 import {CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from "recharts"
-import {AppState} from "@/reducer/app-reducer"
 import {APP_CONFIG} from "@/config"
+import {AppState} from "@/state/app-reducer"
+import {ChainState} from "@/state/chain-reducer"
 
 type TradingViewProps = {
-    state: AppState
+    appState: AppState
+    chainState: ChainState
     priceData: Array<number>
     sentimentData: Array<string>
 }
 export const TradingView = (props: TradingViewProps) => {
-    const {treasury, orderBook} = props.state.balances
+    const {treasury, orderbook} = props.chainState
     const tweet = props.sentimentData[props.sentimentData.length - 1] ?? ""
 
     return (
@@ -19,9 +21,9 @@ export const TradingView = (props: TradingViewProps) => {
                 <div className="font-extrabold">Tweet</div>
                 <div className="col-span-3">{tweet}</div>
                 <div className="font-extrabold">Company balance</div>
-                <div className="col-span-3">{APP_CONFIG.token} {treasury.toLocaleString()}</div>
+                <div className="col-span-3">{APP_CONFIG.token} {treasury.balance.toLocaleString()}</div>
                 <div className="font-extrabold">Order book balance</div>
-                <div className="col-span-3">{APP_CONFIG.token} {orderBook}</div>
+                <div className="col-span-3">{APP_CONFIG.token} {orderbook.balance.toLocaleString()}</div>
             </div>
         </div>
     )

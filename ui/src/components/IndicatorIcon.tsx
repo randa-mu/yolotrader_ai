@@ -1,5 +1,5 @@
 import * as React from "react"
-import {Decision} from "@/reducer/app-reducer"
+import {Decision} from "@/state/app-reducer"
 
 export type IconProps = {
     size?: "small" | "large"

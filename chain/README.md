@@ -5,4 +5,5 @@
 - write a deployment script in [./scripts](./scripts)
 
 ## Quickstart
-- execute [./run.sh](./run.sh) and it will magically compile and deploy your contracts
+- make sure you have docker installed
+- execute [./run.sh](./run.sh) and it will magically compile and deploy your contracts, start anvil and run a block explorer (http://localhost:5100)

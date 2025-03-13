@@ -2,7 +2,7 @@ import * as React from "react"
 import {useEffect, useState} from "react"
 
 type EpochCounterProps = {
-    epoch: number
+    epoch: bigint
     msPerEpoch: number
 }
 
