@@ -10,14 +10,15 @@ import {AgentView} from "@/components/AgentView"
 import {PRICE_DATA} from "@/data/price"
 import {NEWS_DATA} from "@/data/news"
 import {APP_CONFIG} from "@/config"
-import {testSigning} from "@/lib/signing"
 import {useBlockchain} from "@/state/useBlockchain"
+import {ORDERBOOK_ADDRESS, sendTransfer, TREASURY_ADDRESS} from "@/lib/signing"
 
 const EPOCH_DURATION_MS = 15000
 
 function App() {
     const [appState, appDispatch] = useReducer(appReducer, initialDecisionState)
     const [chainState] = useBlockchain()
+    const [lastEpochHandled, setLastEpochHandled] = React.useState(0n)
 
     const restart = () => appDispatch({type: "restart"})
     const nextEpoch = () => appDispatch({type: "new_epoch"})
@@ -32,7 +33,27 @@ function App() {
     }, [chainState.epoch])
 
     useEffect(() => {
-        testSigning(chainState.treasury.nonce)
+        if (lastEpochHandled === chainState.epoch) {
+            return
+        }
+
+        const values = appState.current.values().toArray()
+        if (values.filter(it => it === "BUY").length >= 2) {
+            sendTransfer(TREASURY_ADDRESS, ORDERBOOK_ADDRESS, chainState.treasury.nonce)
+                .then(() => console.log("done"))
+                .catch(err => console.error(err))
+                .finally(() => setLastEpochHandled(chainState.epoch))
+
+        } else if (values.filter(it => it === "SELL").length >= 2) {
+            sendTransfer(ORDERBOOK_ADDRESS, TREASURY_ADDRESS, chainState.orderbook.nonce)
+                .then(() => console.log("done"))
+                .catch(err => console.error(err))
+                .finally(() => setLastEpochHandled(chainState.epoch))
+        }
+    }, [appState.current, chainState.epoch])
+
+    useEffect(() => {
+        sendTransfer(TREASURY_ADDRESS, ORDERBOOK_ADDRESS, chainState.treasury.nonce)
             .then(() => console.log("done"))
             .catch(err => console.error(err))
     }, [chainState.treasury.nonce])

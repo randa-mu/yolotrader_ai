@@ -1,6 +1,7 @@
 pragma solidity ^0.8.24;
 
 import {BLS} from "./BLS.sol";
+import {console} from "../lib/forge-std/src/console.sol";
 
 contract ThresholdWallet {
 
@@ -17,9 +18,11 @@ contract ThresholdWallet {
     function transfer(address recipient, uint256 amount, bytes calldata signature) external payable {
         require(address(this).balance >= amount, "balance too low");
 
+
         bytes memory m = abi.encode(recipient, amount, nonce);
         BLS.PointG1 memory h_m = BLS.hashToPoint(DST, m);
         BLS.PointG1 memory sig = BLS.g1Unmarshal(signature);
+
         (bool pairingSuccess, bool callSuccess) = BLS.verifySingle(sig, publicKey, h_m);
         require(pairingSuccess && callSuccess, "signature verification failed");
 

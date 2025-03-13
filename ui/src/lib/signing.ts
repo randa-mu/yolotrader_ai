@@ -1,56 +1,27 @@
-import {AbiCoder, ContractTransactionResponse, JsonRpcProvider, parseEther, Wallet} from "ethers"
+import {AbiCoder, ContractTransactionResponse, getBytes, keccak256} from "ethers"
 import {G1} from "mcl-wasm"
 import {BlsBn254} from "@/lib/bls"
-import {Agent} from "@/state/app-reducer"
-import {APP_CONFIG} from "@/config"
+import {APP_CONFIG, SIGNING_CONFIG, WALLET} from "@/config"
 import {ThresholdWallet__factory} from "@/generated"
 
-const SIGNING_CONFIG = {
-    amount: parseEther("1"),
-    threshold: 2,
-    DST: new TextEncoder().encode("BLOCKLOCK_BN254G1_XMD:KECCAK-256_SVDW_RO_H1_")
-}
 
-export const TREASURY_ADDRESS = import.meta.env.VITE_TREASURY_ADDRESS
-export const ORDERBOOK_ADDRESS = import.meta.env.VITE_ORDERBOOK_ADDRESS
-const VITE_RISK_AGENT_PRIVATE_KEY = import.meta.env.VITE_RISK_AGENT_PRIVATE_KEY
-const VITE_LIQUIDITY_PRIVATE_KEY = import.meta.env.VITE_LIQUIDITY_PRIVATE_KEY
-const VITE_HUMAN_PRIVATE_KEY = import.meta.env.VITE_HUMAN_PRIVATE_KEY
+export const TREASURY_ADDRESS = APP_CONFIG.treasuryAddress
+export const ORDERBOOK_ADDRESS = APP_CONFIG.orderbookAddress
 
-export async function testSigning(nonce: bigint) {
+
+export async function sendTransfer(from: string, to: string, nonce: bigint) {
     const bls = await BlsBn254.create()
+    const { secretKey } = bls.createKeyPair("0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d")
+    const m = encodeMessage(to, SIGNING_CONFIG.amount, nonce)
+    const h_m = bls.hashToPoint(SIGNING_CONFIG.DST, m)
+    const { signature } = bls.sign(h_m, secretKey)
+    const sigBytes = bls.serialiseG1Hex(signature)
+    const pk = bls.g2FromEvmHex("0x01015bba27cd2725e80b996e3c6f1dccaa532b63e0bcd48cce529e8c431215c92009b5d7e6659ad11b2134dc5978536f60f0f9c61b4e7cd70f6d069823e9701d0f34ffc0589e6b12d4a7e5c825f3667ea3cf7361c7f2cee5bbc3c18b596726781fbcbb669449e378ed7361d67b949679da223d0c4f29a0da9119b64ffb16abb9")
+    console.log("verifies", bls.verify(bls.hashToPoint(SIGNING_CONFIG.DST, m), pk, signature))
 
-    const s1 = await signTransfer("risk", ORDERBOOK_ADDRESS, nonce)
-    const s2 = await signTransfer("liquidity", ORDERBOOK_ADDRESS, nonce)
-    const groupSig = await aggregateSignatures([s1, s2])
-    const groupSigBytes = bls.serialiseG1Hex(groupSig)
-
-    const wallet = new Wallet("0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d", new JsonRpcProvider(APP_CONFIG.rpcUrl))
-    const contract = ThresholdWallet__factory.connect(TREASURY_ADDRESS, wallet)
-    const tx: ContractTransactionResponse = await contract.transfer(ORDERBOOK_ADDRESS, SIGNING_CONFIG.amount, groupSigBytes)
+    const contract = ThresholdWallet__factory.connect(from, WALLET)
+    const tx: ContractTransactionResponse = await contract.transfer(to, SIGNING_CONFIG.amount, sigBytes)
     await tx.wait()
-}
-
-export async function signTransfer(agent: Agent, recipient: string, nonce: bigint): Promise<G1> {
-    const bls = await BlsBn254.create()
-
-    let key: string
-    switch (agent) {
-        case "human":
-            key = VITE_HUMAN_PRIVATE_KEY;
-            break
-        case "liquidity":
-            key = VITE_LIQUIDITY_PRIVATE_KEY;
-            break
-        case "risk":
-            key = VITE_RISK_AGENT_PRIVATE_KEY;
-            break
-    }
-
-    const message = encodeMessage(recipient, SIGNING_CONFIG.amount, nonce)
-    const {secretKey} = bls.createKeyPair(encodeKey(key))
-    const {signature} = bls.sign(bls.hashToPoint(SIGNING_CONFIG.DST, message), secretKey)
-    return signature
 }
 
 function encodeKey(k: string): `0x${string}` {
@@ -61,7 +32,7 @@ function encodeKey(k: string): `0x${string}` {
 }
 
 function encodeMessage(address: string, amount: bigint, nonce: bigint): Uint8Array {
-    return AbiCoder.defaultAbiCoder().encode(["address", "uint256", "uint256"], [address, amount, nonce])
+    return getBytes(AbiCoder.defaultAbiCoder().encode(["address", "uint256", "uint256"], [address, amount, nonce]))
 }
 
 export async function aggregateSignatures(signatures: Array<G1>): Promise<G1> {

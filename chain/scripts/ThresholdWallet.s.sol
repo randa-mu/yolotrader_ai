@@ -8,7 +8,7 @@ import {ThresholdWallet} from "../contracts/ThresholdWallet.sol";
 contract ThresholdWalletScript is Script {
     function run() public {
         vm.startBroadcast(0x2a871d0798f97d79848a013d4936a73bf4cc922c825d33c1cf7073dff6d409c6);
-        bytes memory pk = hex"20757356ac9fb41dcb3cfaca4fa615445c2050f5a82004c54fc96e4ad66980db0940b255a45083ff2ce3f022e041c6ba07107e203d915db691c2226ec909e5ca28cc0aa0a20e284f4dd1aef5cecd669b51b5245f5e38b958851b81b4d205ae0029fc403ed19c1cc2bc18d3ca42fbe573168f91c96cc566f5412037b8abc8bee7";
+        bytes memory pk = hex"01015bba27cd2725e80b996e3c6f1dccaa532b63e0bcd48cce529e8c431215c92009b5d7e6659ad11b2134dc5978536f60f0f9c61b4e7cd70f6d069823e9701d0f34ffc0589e6b12d4a7e5c825f3667ea3cf7361c7f2cee5bbc3c18b596726781fbcbb669449e378ed7361d67b949679da223d0c4f29a0da9119b64ffb16abb9";
 
         ThresholdWallet treasury = new ThresholdWallet(pk);
         ThresholdWallet orderBook = new ThresholdWallet(pk);

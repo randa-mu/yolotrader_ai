@@ -1,13 +1,12 @@
 import {Dispatch, useEffect, useReducer} from "react"
-import {WALLET} from "@/config"
+import {APP_CONFIG, WALLET} from "@/config"
 import {ThresholdWallet, ThresholdWallet__factory} from "@/generated"
-import {ORDERBOOK_ADDRESS, TREASURY_ADDRESS} from "@/lib/signing"
 import {ChainAction, chainReducer, ChainState, initialChainState} from "@/state/chain-reducer"
 
 export function useBlockchain(): [ChainState, Dispatch<ChainAction>] {
     const [state, dispatch] = useReducer(chainReducer, initialChainState)
-    const treasuryContract = ThresholdWallet__factory.connect(TREASURY_ADDRESS, WALLET)
-    const orderbookContract = ThresholdWallet__factory.connect(ORDERBOOK_ADDRESS, WALLET)
+    const treasuryContract = ThresholdWallet__factory.connect(APP_CONFIG.treasuryAddress, WALLET)
+    const orderbookContract = ThresholdWallet__factory.connect(APP_CONFIG.orderbookAddress, WALLET)
 
     const onNewBlock = (blockNumber: bigint) => {
         dispatch({
@@ -55,11 +54,11 @@ async function updateBalance(dispatch: Dispatch<ChainAction>, treasuryContract: 
     dispatch({
         type: "balance_update",
         treasury: {
-            balance: await WALLET.provider.getBalance(TREASURY_ADDRESS),
+            balance: await WALLET.provider.getBalance(APP_CONFIG.treasuryAddress),
             nonce: await treasuryContract.nonce(),
         },
         orderbook: {
-            balance: await WALLET.provider.getBalance(ORDERBOOK_ADDRESS),
+            balance: await WALLET.provider.getBalance(APP_CONFIG.orderbookAddress),
             nonce: await orderbookContract.nonce(),
         }
     })

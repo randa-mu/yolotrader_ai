@@ -189,6 +189,26 @@ class BlsBn254 {
         return this.g1FromEvm(BigInt(`0x${x}`), BigInt(`0x${y}`))
     }
 
+    public g2FromEvmHex(input: BytesLike): G2 {
+        const hex = hexlify(input)
+        const trimmed = hex.startsWith("0x") ? hex.slice(2) : hex
+        const x = trimmed.slice(0, trimmed.length / 2)
+        const y = trimmed.slice(trimmed.length / 2, trimmed.length)
+
+        const x1 = x.slice(0, x.length / 2)
+        const x2 = x.slice(x.length / 2, x.length)
+
+        const y1 = y.slice(0, x.length / 2)
+        const y2 = y.slice(x.length / 2, x.length)
+
+        return this.g2FromEvm([
+            BigInt(`0x${x1}`),
+            BigInt(`0x${x2}`),
+            BigInt(`0x${y1}`),
+            BigInt(`0x${y2}`)
+        ])
+    }
+
     public g1FromEvm(g1X: bigint, g1Y: bigint) {
         const x = toHex(g1X)
         const y = toHex(g1Y)
