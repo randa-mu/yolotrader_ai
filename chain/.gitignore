@@ -1,1 +1,4 @@
 anvil.log
+out
+cache/*
+*.swp
