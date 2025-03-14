@@ -1,15 +1,16 @@
 import * as React from "react"
-import {AgentDecisionAction, AppState} from "@/state/app-reducer"
+import {AgentDecisionAction, AppAction, AppState} from "@/state/app-reducer"
 import {AgentRisk} from "@/components/AgentRisk"
 import {AgentLiquidity} from "@/components/AgentLiquidity"
 import {ChainState} from "@/state/chain-reducer"
+import {Dispatch} from "react"
 
 type AgentViewProps = {
     state: AppState
     chainState: ChainState
     priceData: Array<number>
     marketSentimentData: Array<string>
-    onAgentDecision: (agent: AgentDecisionAction) => unknown
+    dispatch: Dispatch<AppAction>
 }
 
 export const AgentView = (props: AgentViewProps) => {
@@ -20,14 +21,14 @@ export const AgentView = (props: AgentViewProps) => {
                 appState={props.state}
                 priceData={props.priceData}
                 marketSentimentData={props.marketSentimentData}
-                onAgentDecision={props.onAgentDecision}
+                dispatch={props.dispatch}
             />
             <AgentRisk
                 appState={props.state}
                 chainState={props.chainState}
                 priceData={props.priceData}
                 marketSentimentData={props.marketSentimentData}
-                onAgentDecision={props.onAgentDecision}
+                dispatch={props.dispatch}
             />
         </div>
     )

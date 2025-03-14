@@ -2,25 +2,22 @@ import {Dispatch, useEffect, useReducer} from "react"
 import {APP_CONFIG, WALLET} from "@/config"
 import {ThresholdWallet, ThresholdWallet__factory} from "@/generated"
 import {ChainAction, chainReducer, ChainState, initialChainState} from "@/state/chain-reducer"
+import {createNewEpochAction} from "@/state/chain-reducer"
 
 export function useBlockchain(): [ChainState, Dispatch<ChainAction>] {
     const [state, dispatch] = useReducer(chainReducer, initialChainState)
     const treasuryContract = ThresholdWallet__factory.connect(APP_CONFIG.treasuryAddress, WALLET)
     const orderbookContract = ThresholdWallet__factory.connect(APP_CONFIG.orderbookAddress, WALLET)
 
-    const onNewBlock = (blockNumber: bigint) => {
-        dispatch({
-            type: "new_epoch",
-            epoch: blockNumber
-        })
-    }
+    const onNewBlock = createNewEpochAction(dispatch)
     const addBlockListener = async () => {
         await WALLET.provider.on("block", onNewBlock)
     }
 
     const setupListeners = async () => {
         try {
-            await fetchBlockNumber(dispatch)
+            const blockNumber = await WALLET.provider.getBlockNumber()
+            onNewBlock(BigInt(blockNumber))
             await addBlockListener()
             await updateBalance(dispatch, treasuryContract, orderbookContract)
             await treasuryContract.addListener("Transfer", () => updateBalance(dispatch, treasuryContract, orderbookContract))
@@ -61,13 +58,5 @@ async function updateBalance(dispatch: Dispatch<ChainAction>, treasuryContract: 
             balance: await WALLET.provider.getBalance(APP_CONFIG.orderbookAddress),
             nonce: await orderbookContract.nonce(),
         }
-    })
-}
-
-async function fetchBlockNumber(dispatch: Dispatch<ChainAction>) {
-    const blockNumber = await WALLET.provider.getBlockNumber()
-    dispatch({
-        type: "new_epoch",
-        epoch: blockNumber
     })
 }

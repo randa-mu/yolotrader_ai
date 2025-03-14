@@ -1,9 +1,9 @@
 import * as React from "react"
-import {useCallback, useEffect, useState} from "react"
+import {Dispatch, useCallback, useEffect, useState} from "react"
 import {AgentCard} from "@/components/AgentCard"
 import {IndicatorIcon} from "@/components/IndicatorIcon"
 import {runRiskAnalysis} from "@/lib/risk"
-import {AgentDecisionAction, AppState, createAgentDecision} from "@/state/app-reducer"
+import {AgentDecisionAction, AppAction, AppState, createAgentDecision} from "@/state/app-reducer"
 import {TREASURY_POLICY} from "@/data/treasury-policy"
 import {Textarea} from "@/components/ui/textarea"
 import {Button} from "@/components/ui/button"
@@ -14,7 +14,7 @@ type AgentRiskProps = {
     chainState: ChainState
     priceData: Array<number>
     marketSentimentData: Array<string>
-    onAgentDecision: (agent: AgentDecisionAction) => unknown
+    dispatch: Dispatch<AppAction>
 }
 export const AgentRisk = (props: AgentRiskProps) => {
     const {epoch} = props.chainState
@@ -22,12 +22,7 @@ export const AgentRisk = (props: AgentRiskProps) => {
     const [reasoning, setReasoning] = useState("")
     const [treasuryPolicy, setTreasuryPolicy] = useState(TREASURY_POLICY)
     const [stagedPolicy, setStagedPolicy] = useState(TREASURY_POLICY)
-
-    const analyseRisk = useCallback(async () => {
-        const risk = await runRiskAnalysis(props.chainState, treasuryPolicy)
-        props.onAgentDecision(createAgentDecision("risk", risk.decision))
-        setReasoning(risk.reason)
-    }, [props.onAgentDecision, props.appState, treasuryPolicy])
+    const onAgentDecision = createAgentDecision(props.dispatch)
 
     const resetPolicies = () => {
         setStagedPolicy(TREASURY_POLICY)
@@ -36,7 +31,11 @@ export const AgentRisk = (props: AgentRiskProps) => {
 
     useEffect(() => {
         setLoading(true)
-        analyseRisk()
+        runRiskAnalysis(props.chainState, treasuryPolicy)
+            .then(result => {
+                onAgentDecision("risk", result.decision)
+                setReasoning(result.reason)
+            })
             .finally(() => setLoading(false))
     }, [epoch])
 

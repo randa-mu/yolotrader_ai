@@ -1,9 +1,9 @@
 import * as React from "react"
-import {Decision} from "@/state/app-reducer"
+import {Decision, HistoryEntry} from "@/state/app-reducer"
 import {IndicatorIcon} from "@/components/IndicatorIcon"
 
 type HistoryProps = {
-    history: Array<Map<string, Decision>>
+    history: Array<HistoryEntry>
 }
 export const History = (props: HistoryProps) => {
     if (props.history.length === 0) {
@@ -14,7 +14,7 @@ export const History = (props: HistoryProps) => {
             </div>
         )
     }
-    const reversedHistory = props.history.map((decision, index) => ({decision, epoch: index})).toReversed()
+    const reversedHistory = props.history.slice().toReversed()
     return (
         <div className="flex flex-col space-y-2 justify-center p-2">
             <h1 className="text-3xl font-extrabold">History</h1>
@@ -24,11 +24,11 @@ export const History = (props: HistoryProps) => {
                 <div className="font-extrabold">Human</div>
                 <div className="font-extrabold">Liquidity</div>
                 <div className="font-extrabold">Risk</div>
-                {reversedHistory.map(({decision, epoch}) =>
+                {reversedHistory.map((entry) =>
                     <EpochHistory
-                        key={epoch}
-                        decision={decision}
-                        epoch={epoch}
+                        key={entry.epoch}
+                        epoch={entry.epoch}
+                        decisions={entry.decisions}
                     />
                 )}
             </div>
@@ -37,16 +37,16 @@ export const History = (props: HistoryProps) => {
 }
 
 type EpochHistoryProps = {
-    epoch: number
-    decision: Map<string, Decision>,
+    epoch: bigint
+    decisions: Map<string, Decision>,
 }
 export const EpochHistory = (props: EpochHistoryProps) => {
     return (
         <>
             <div><p>{props.epoch}</p></div>
-            <div>{<IndicatorIcon value={props.decision.get("human")}/>}</div>
-            <div>{<IndicatorIcon value={props.decision.get("liquidity")}/>}</div>
-            <div>{<IndicatorIcon value={props.decision.get("risk")}/>}</div>
+            <div>{<IndicatorIcon value={props.decisions.get("human")}/>}</div>
+            <div>{<IndicatorIcon value={props.decisions.get("liquidity")}/>}</div>
+            <div>{<IndicatorIcon value={props.decisions.get("risk")}/>}</div>
         </>
     )
 }

@@ -1,7 +1,7 @@
 import * as React from "react"
-import {AgentDecisionAction, AppState, createAgentDecision, Decision} from "@/state/app-reducer"
+import {AgentDecisionAction, AppAction, AppState, createAgentDecision, Decision} from "@/state/app-reducer"
 import {IndicatorIcon} from "@/components/IndicatorIcon"
-import {useEffect, useState} from "react"
+import {Dispatch, useCallback, useEffect, useState} from "react"
 import {LoadingSpinner} from "@/components/ui/LoadingSpinner"
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover"
 import {Button} from "@/components/ui/button"
@@ -11,23 +11,27 @@ type AgentLiquidityProps = {
     appState: AppState
     priceData: Array<number>
     marketSentimentData: Array<string>
-    onAgentDecision: (agent: AgentDecisionAction) => unknown
+    dispatch: Dispatch<AppAction>
 }
 export const AgentLiquidity = (props: AgentLiquidityProps) => {
     const {epoch} = props.appState
     const [isLoading, setLoading] = useState(true)
+    const onAgentDecision = useCallback(createAgentDecision(props.dispatch), [props.dispatch])
 
     useEffect(() => {
+        if (!props.dispatch) {
+            return
+        }
         const randomLatency = Math.random() * 4000
         // we mock the liquidity agent for now
         setTimeout(
             () => {
-                props.onAgentDecision(createAgentDecision("liquidity", randomDecision()))
+                onAgentDecision("liquidity", randomDecision())
                 setLoading(false)
             },
             randomLatency
         )
-    }, [epoch])
+    }, [epoch, props.dispatch])
 
     return (
         <AgentCard isLoading={isLoading}>

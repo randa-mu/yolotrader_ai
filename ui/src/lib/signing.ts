@@ -1,5 +1,4 @@
-import {AbiCoder, ContractTransactionResponse, getBytes, keccak256} from "ethers"
-import {G1} from "mcl-wasm"
+import {AbiCoder, ContractTransactionResponse, getBytes} from "ethers"
 import {BlsBn254} from "@/lib/bls"
 import {APP_CONFIG, SIGNING_CONFIG, WALLET} from "@/config"
 import {ThresholdWallet__factory} from "@/generated"
@@ -9,7 +8,7 @@ export const TREASURY_ADDRESS = APP_CONFIG.treasuryAddress
 export const ORDERBOOK_ADDRESS = APP_CONFIG.orderbookAddress
 
 
-export async function sendTransfer(from: string, to: string, nonce: bigint) {
+export async function sendTransfer(from: string, to: string, nonce: bigint): Promise<string> {
     const bls = await BlsBn254.create()
     const { secretKey } = bls.createKeyPair("0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d")
     const m = encodeMessage(to, SIGNING_CONFIG.amount, nonce)
@@ -22,29 +21,9 @@ export async function sendTransfer(from: string, to: string, nonce: bigint) {
     const contract = ThresholdWallet__factory.connect(from, WALLET)
     const tx: ContractTransactionResponse = await contract.transfer(to, SIGNING_CONFIG.amount, sigBytes)
     await tx.wait()
-}
-
-function encodeKey(k: string): `0x${string}` {
-    if (k.startsWith("0x")) {
-        return k as `0x${string}`
-    }
-    return `0x${k}`
+    return tx.hash
 }
 
 function encodeMessage(address: string, amount: bigint, nonce: bigint): Uint8Array {
     return getBytes(AbiCoder.defaultAbiCoder().encode(["address", "uint256", "uint256"], [address, amount, nonce]))
-}
-
-export async function aggregateSignatures(signatures: Array<G1>): Promise<G1> {
-    if (signatures.length < SIGNING_CONFIG.threshold) {
-        throw new Error("not enough signatures to aggregate")
-    }
-    const bls = await BlsBn254.create()
-
-    let aggregated: G1 = signatures[0]
-    for (let i = 1; i < SIGNING_CONFIG.threshold; i++) {
-        aggregated = bls.aggregate(aggregated, signatures[i])
-    }
-
-    return aggregated
 }

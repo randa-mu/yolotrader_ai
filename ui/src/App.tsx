@@ -1,6 +1,11 @@
 import * as React from "react"
 import {useEffect, useReducer} from "react"
-import {appReducer, Decision, initialDecisionState} from "@/state/app-reducer"
+import {
+    appReducer, AppState,
+    createAgentDecision,
+    createNewEpochAction,
+    initialDecisionState
+} from "@/state/app-reducer"
 import {History} from "@/components/History"
 import {Button} from "@/components/ui/button"
 import {EpochCounter} from "@/components/EpochCounter"
@@ -11,52 +16,31 @@ import {PRICE_DATA} from "@/data/price"
 import {NEWS_DATA} from "@/data/news"
 import {APP_CONFIG} from "@/config"
 import {useBlockchain} from "@/state/useBlockchain"
-import {ORDERBOOK_ADDRESS, sendTransfer, TREASURY_ADDRESS} from "@/lib/signing"
-
-const EPOCH_DURATION_MS = 15000
+import {tradeIfNecessary} from "@/lib/trade"
 
 function App() {
     const [appState, appDispatch] = useReducer(appReducer, initialDecisionState)
     const [chainState] = useBlockchain()
     const [lastEpochHandled, setLastEpochHandled] = React.useState(0n)
+    const [txHash, setTxHash] = React.useState("")
 
     const restart = () => appDispatch({type: "restart"})
-    const nextEpoch = () => appDispatch({type: "new_epoch"})
-    const onAgentAction = (decision: Decision) => appDispatch({type: "agent_action", agent: "human", decision})
-    const onBuy = () => onAgentAction("BUY")
-    const onSell = () => onAgentAction("SELL")
-    const onNoAction = () => onAgentAction("HODL")
+    const onNextEpoch = createNewEpochAction(appDispatch)
+    const onAgentAction = createAgentDecision(appDispatch)
 
+    // we propagate epochs between the states
     useEffect(() => {
-        const timerId = setTimeout(nextEpoch, EPOCH_DURATION_MS)
-        return () => clearTimeout(timerId)
+        onNextEpoch(chainState.epoch)
     }, [chainState.epoch])
 
+    // this listens for epoch changes and submits txs based on te decisions of agents
     useEffect(() => {
-        if (lastEpochHandled === chainState.epoch) {
-            return
-        }
-
-        const values = appState.current.values().toArray()
-        if (values.filter(it => it === "BUY").length >= 2) {
-            sendTransfer(TREASURY_ADDRESS, ORDERBOOK_ADDRESS, chainState.treasury.nonce)
-                .then(() => console.log("done"))
-                .catch(err => console.error(err))
-                .finally(() => setLastEpochHandled(chainState.epoch))
-
-        } else if (values.filter(it => it === "SELL").length >= 2) {
-            sendTransfer(ORDERBOOK_ADDRESS, TREASURY_ADDRESS, chainState.orderbook.nonce)
-                .then(() => console.log("done"))
-                .catch(err => console.error(err))
-                .finally(() => setLastEpochHandled(chainState.epoch))
-        }
-    }, [appState.current, chainState.epoch])
-
-    useEffect(() => {
-        sendTransfer(TREASURY_ADDRESS, ORDERBOOK_ADDRESS, chainState.treasury.nonce)
-            .then(() => console.log("done"))
+        tradeIfNecessary(chainState, appState)
+            .then(setTxHash)
             .catch(err => console.error(err))
-    }, [chainState.treasury.nonce])
+            .finally(() => setLastEpochHandled(chainState.epoch))
+
+    }, [appState.current, chainState.epoch])
 
     if (chainState.epoch === 0n) {
         return <div>Loading...</div>
@@ -82,7 +66,10 @@ function App() {
     return (
         <div>
             <div className="absolute left-0 top-0 m-2">
-                <EpochCounter epoch={chainState.epoch} msPerEpoch={EPOCH_DURATION_MS}/>
+                <EpochCounter
+                    epoch={chainState.epoch}
+                    msPerEpoch={APP_CONFIG.msPerEpoch}
+                />
             </div>
             <div className="flex-10/12">
                 <h1 className=" text-7xl font-extrabold m-10">yolotrader-ai</h1>
@@ -109,18 +96,19 @@ function App() {
                         chainState={chainState}
                         priceData={priceData}
                         marketSentimentData={sentimentData}
-                        onAgentDecision={appDispatch}
+                        dispatch={appDispatch}
                     />
                 </div>
             </div>
             <div>
                 <ActionButtons
                     epoch={chainState.epoch}
-                    onBuy={onBuy}
-                    onSell={onSell}
-                    onNoAction={onNoAction}
+                    onBuy={() => onAgentAction("human", "BUY")}
+                    onSell={() => onAgentAction("human", "SELL")}
+                    onNoAction={() => onAgentAction("human", "HODL")}
                 />
             </div>
+            {!!txHash && <div><p>Transaction sent with hash {txHash}</p></div>}
         </div>
     )
 }
