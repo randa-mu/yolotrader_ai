@@ -121,7 +121,7 @@ function TradingScreen() {
                     </p>
 
                     <div className="mb-8 text-amber-300 font-mono">
-                        <p className="mb-2">• You start with 100,000 MOON tokens</p>
+                        <p className="mb-2">• You start with 10,000,000 MOON tokens</p>
                         <p className="mb-2">• BUY, SELL or HODL based on market conditions</p>
                         <p className="mb-2">• Watch for news that might affect the market</p>
                         <p>• Don't go broke. Seriously, that's embarrassing.</p>
@@ -148,7 +148,13 @@ function TradingScreen() {
             : getBalanceMessage(finalBalance);
 
         return (
-            <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-90">
+
+            <div className="fixed inset-0 flex-col items-center justify-center z-50 bg-black bg-opacity-90">
+                <header className="top-0 w-full flex flex-row content-start p-4 px-8 text-left font-display text-2xl font-semibold text-white">
+                    <img src={RandamuLogo} alt="Icon" className="w-10 h-10" />
+                    <span className="ml-3">randamu</span>
+                    <span className="ml-3 font-medium">| Yolotrader-AI</span>
+                </header>
                 <div className="bg-black border-2 border-amber-500 p-8 rounded-md text-center max-w-2xl mx-auto">
                     <h2 className="text-amber-500 text-4xl font-mono font-bold mb-6">
                         {isBankrupt ? "BANKRUPTCY!" : "GAME OVER"}
@@ -169,17 +175,14 @@ function TradingScreen() {
         );
     }
 
-    // Show start screen if game hasn't started
     if (!gameStarted) {
         return <StartScreen/>
     }
 
-    // Game over condition
     if (epoch >= PRICE_DATA.price_data.length) {
         return <GameOverScreen isBankrupt={false}/>
     }
 
-    // Bankruptcy condition
     if (chainState.treasury.balance <= 0) {
         return <GameOverScreen isBankrupt={true}/>
     }
