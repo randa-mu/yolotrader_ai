@@ -9,7 +9,7 @@ import {TradingHeader} from "@/components/TradingHeader"
 import {PRICE_DATA} from "@/data/price"
 import {NEWS_DATA} from "@/data/news"
 import {APP_CONFIG} from "@/config"
-import RandamuLogo from "../public/assets/randamu_logo.svg"
+import RandamuLogo from "@/assets/randamu_logo.svg"
 import {
     appReducer,
     createAgentDecision,
@@ -262,7 +262,7 @@ function TradingScreen() {
                     </div>
                 </div>
                 <img
-                    src="/assets/trader.png"
+                    src="/trader.png"
                     alt="Trader"
                     className="absolute bottom-0 left-1/2 transform -translate-x-1/2 z-10 w-[1500px] h-auto max-w-none pointer-events-none"
                 />
