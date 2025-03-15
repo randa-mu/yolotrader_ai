@@ -23,6 +23,8 @@ export const AgentRisk = (props: AgentRiskProps) => {
     const [treasuryPolicy, setTreasuryPolicy] = useState(TREASURY_POLICY)
     const [stagedPolicy, setStagedPolicy] = useState(TREASURY_POLICY)
     const onAgentDecision = createAgentDecision(props.dispatch)
+    // used to abort risk analyses that take too long
+    const [abort, setAbort] = useState(new AbortController())
 
     const resetPolicies = () => {
         setStagedPolicy(TREASURY_POLICY)
@@ -31,7 +33,11 @@ export const AgentRisk = (props: AgentRiskProps) => {
 
     useEffect(() => {
         setLoading(true)
-        runRiskAnalysis(props.chainState, treasuryPolicy)
+        abort.abort()
+        const newAbortController = new AbortController()
+        setAbort(newAbortController)
+
+        runRiskAnalysis(newAbortController, props.chainState, treasuryPolicy)
             .then(result => {
                 onAgentDecision("risk", result.decision)
                 setReasoning(result.reason)

@@ -1,5 +1,5 @@
 import * as React from "react"
-import {useEffect, useReducer} from "react"
+import {useEffect, useReducer, useState} from "react"
 import {
     appReducer, AppState,
     createAgentDecision,
@@ -21,24 +21,37 @@ import {tradeIfNecessary} from "@/lib/trade"
 function App() {
     const [appState, appDispatch] = useReducer(appReducer, initialDecisionState)
     const [chainState] = useBlockchain()
-    const [lastEpochHandled, setLastEpochHandled] = React.useState(0n)
+    const [priceData, setPriceData] = useState([])
+    const [sentimentData, setSentimentData] = useState([])
+    const [sendingTx, setSendingTx] = useState(false)
     const [txHash, setTxHash] = React.useState("")
 
     const restart = () => appDispatch({type: "restart"})
     const onNextEpoch = createNewEpochAction(appDispatch)
     const onAgentAction = createAgentDecision(appDispatch)
 
-    // we propagate epochs between the states
+    // we propagate epochs between the states and update the price/sentiment data
     useEffect(() => {
         onNextEpoch(chainState.epoch)
+
+        const priceData = PRICE_DATA.price_data
+            .filter(it => it.epoch <= chainState.epoch)
+            .map(it => it.price)
+        setPriceData(priceData)
+
+        const sentimentData = NEWS_DATA
+            .filter(it => it.epoch <= chainState.epoch)
+            .map(it => it.content)
+        setSentimentData(sentimentData)
     }, [chainState.epoch])
 
     // this listens for epoch changes and submits txs based on te decisions of agents
     useEffect(() => {
+        setSendingTx(true)
         tradeIfNecessary(chainState, appState)
             .then(setTxHash)
             .catch(err => console.error(err))
-            .finally(() => setLastEpochHandled(chainState.epoch))
+            .finally(() => setSendingTx(false))
 
     }, [appState.current, chainState.epoch])
 
@@ -54,14 +67,6 @@ function App() {
             </div>
         )
     }
-
-    const priceData = PRICE_DATA.price_data
-        .filter(it => it.epoch <= chainState.epoch)
-        .map(it => it.price)
-
-    const sentimentData = NEWS_DATA
-        .filter(it => it.epoch <= chainState.epoch)
-        .map(it => it.content)
 
     return (
         <div>
@@ -108,6 +113,7 @@ function App() {
                     onNoAction={() => onAgentAction("human", "HODL")}
                 />
             </div>
+            {sendingTx && <div><p>Sending blockchain transaction...</p></div>}
             {!!txHash && <div><p>Transaction sent with hash {txHash}</p></div>}
         </div>
     )

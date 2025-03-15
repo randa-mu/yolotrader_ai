@@ -36,7 +36,7 @@ const openai = new OpenAI({
     dangerouslyAllowBrowser: true
 })
 
-export async function runRiskAnalysis(chainState: ChainState, treasuryPolicy: string): Promise<RiskAnalysis> {
+export async function runRiskAnalysis(abortController: AbortController, chainState: ChainState, treasuryPolicy: string): Promise<RiskAnalysis> {
     const thread = await openai.beta.threads.create()
     await openai.beta.threads.messages.create(thread.id, {
         role: "user",
@@ -55,7 +55,7 @@ export async function runRiskAnalysis(chainState: ChainState, treasuryPolicy: st
         ]
     })
 
-    await waitForRun(thread, run.id, chainState, treasuryPolicy)
+    await waitForRun(abortController, thread, run.id, chainState, treasuryPolicy)
 
     const json = await extractLatestResponse(thread)
     if (json === "") {
@@ -70,9 +70,12 @@ export async function runRiskAnalysis(chainState: ChainState, treasuryPolicy: st
     }
 }
 
-async function waitForRun(thread: Thread, runId: string, chainState: ChainState, treasuryPolicy: string): Promise<void> {
+async function waitForRun(abortController: AbortController, thread: Thread, runId: string, chainState: ChainState, treasuryPolicy: string): Promise<void> {
     let runs = 0
     while (runs < APP_CONFIG.inferenceRetries) {
+        if (abortController.signal.aborted) {
+            throw new Error("aborted!")
+        }
         const run = await openai.beta.threads.runs.retrieve(thread.id, runId)
         if (run.status === "completed") {
             return
