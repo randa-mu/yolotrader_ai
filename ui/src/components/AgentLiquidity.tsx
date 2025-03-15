@@ -1,16 +1,14 @@
 import * as React from "react"
-import {AgentDecisionAction, AppAction, AppState, createAgentDecision, Decision} from "@/state/app-reducer"
+import {AppAction, AppState, createAgentDecision, Decision} from "@/state/app-reducer"
 import {IndicatorIcon} from "@/components/IndicatorIcon"
 import {Dispatch, useCallback, useEffect, useState} from "react"
-import {LoadingSpinner} from "@/components/ui/LoadingSpinner"
-import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover"
-import {Button} from "@/components/ui/button"
 import {AgentCard} from "@/components/AgentCard"
+import { NewsData } from "@/data/news"
 
 type AgentLiquidityProps = {
     appState: AppState
     priceData: Array<number>
-    marketSentimentData: Array<string>
+    marketSentimentData: Array<NewsData>
     dispatch: Dispatch<AppAction>
 }
 export const AgentLiquidity = (props: AgentLiquidityProps) => {
@@ -34,8 +32,8 @@ export const AgentLiquidity = (props: AgentLiquidityProps) => {
     }, [epoch, props.dispatch])
 
     return (
-        <AgentCard isLoading={isLoading}>
-            <AgentCard.Title>Liquidity</AgentCard.Title>
+        <AgentCard isLoading={isLoading} value={props.appState.current.get("liquidity")}>
+            <AgentCard.Title>LIQUIDITY</AgentCard.Title>
             <AgentCard.Content>
                 <IndicatorIcon
                     size="large"

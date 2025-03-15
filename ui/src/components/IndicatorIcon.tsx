@@ -7,13 +7,15 @@ export type IconProps = {
 }
 
 export function IndicatorIcon(props: IconProps) {
-    const className = props.size === "large" ? "text-4xl" : ""
+    const className = props.size === "large" ? "text-2xl font-mono text-center align-middle" : "text-lg font-mono text-center align-middle"
     switch (props.value) {
         case "BUY":
-            return <p className={className}>✅</p>
+            return <p className={`${className} + text-green-500`}>⏶</p>
         case "SELL":
-            return <p className={className}>❌</p>
+            return <p className={`${className} + text-red-500`}>⏷</p>
+        case "NO ACTION":
+             return <p className={`${className} + text-neutral-200`}>—</p>
         default:
-            return <p className={className}>🤝</p>
+            return <p className={`${className} + text-yellow-500`}>⊖</p>
     }
 }

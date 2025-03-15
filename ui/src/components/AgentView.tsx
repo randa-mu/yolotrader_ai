@@ -1,22 +1,25 @@
 import * as React from "react"
-import {AgentDecisionAction, AppAction, AppState} from "@/state/app-reducer"
+import {Dispatch} from "react"
+import {AppAction, AppState} from "@/state/app-reducer"
 import {AgentRisk} from "@/components/AgentRisk"
 import {AgentLiquidity} from "@/components/AgentLiquidity"
+import { NewsData } from "@/data/news"
 import {ChainState} from "@/state/chain-reducer"
-import {Dispatch} from "react"
 
 type AgentViewProps = {
     state: AppState
     chainState: ChainState
     priceData: Array<number>
-    marketSentimentData: Array<string>
+    marketSentimentData: Array<NewsData>
     dispatch: Dispatch<AppAction>
 }
 
 export const AgentView = (props: AgentViewProps) => {
     return (
-        <div className="flex flex-col space-2 justify-center p-2">
-            <h1 className="text-4xl font-extrabold">Agent actions</h1>
+        <div className="basis-2/5 flex flex-col border border-neutral-800">
+            <div className="w-full p-1 px-2 gap-2 bg-neutral-800 font-mono text-sm text-left text-neutral-400">
+                <span className="">Agent advisory</span>
+            </div>
             <AgentLiquidity
                 appState={props.state}
                 priceData={props.priceData}

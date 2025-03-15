@@ -1,4 +1,5 @@
 import * as React from "react"
+import {Decision} from "@/reducer/app-reducer"
 import {PropsWithChildren, ReactElement, ReactNode} from "react"
 import {LoadingSpinner} from "@/components/ui/LoadingSpinner"
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover"
@@ -7,7 +8,9 @@ import {Button} from "@/components/ui/button"
 type AgentCardProps = {
     isLoading: boolean
     children: ReactNode
+    value: Decision
 }
+
 export const AgentCard = (props: AgentCardProps) => {
     let title: ReactElement
     let config: ReactElement
@@ -30,31 +33,43 @@ export const AgentCard = (props: AgentCardProps) => {
         }
     })
 
+        const titleColour = () => {
+        switch (props.value) {
+            case "BUY":
+                return "text-green-500"
+            case "SELL":
+                return "text-red-500"
+            default:
+                return "text-yellow-500"
+        }
+    }
+
     return (
-        <div className="grid grid-cols-4 space-x-2 p-2 min-h-20 min-w-20 text-center align-middle">
-            <div className="text-2xl font-extrabold align-middle text-center">{title}</div>
-            <div>
-                {props.isLoading
-                    ? <LoadingSpinner/>
-                    : content
-                }
-            </div>
-            <div>
-                <Popover>
-                    <PopoverTrigger asChild>
-                        <Button disabled={props.isLoading || !reason}>explain</Button>
-                    </PopoverTrigger>
-                    <PopoverContent>
+        <div className="flex-col p-2 min-h-20 min-w-20 text-left font-mono align-middle">
+            <div className="flex items-center justify-center">
+                <div className="w-32 h-20 flex flex-col items-center justify-center">
+                        {props.isLoading
+                            ? <LoadingSpinner/>
+                            : content
+                        }
+                    <div className={`${titleColour()} text-lg font-medium font-mono align-middle text-center className="w-full"`}>{title}</div>
+                </div>
+
+                <div className="flex-1 text-amber-500 font-mono ml-4">     
+                    {reason && (
+                        <div className="text-m">
                         {reason}
-                    </PopoverContent>
-                </Popover>
+                        </div>
+                    )}
+                </div>
             </div>
-            <div>
+
+            <div className="flex">
                 <Popover>
                     <PopoverTrigger asChild>
-                        <Button disabled={!config}>configure</Button>
+                        <Button className="grow rounded-none bg-neutral-700 border-radius-0 text-black font-mono font-semibold" disabled={!config}>configure</Button>
                     </PopoverTrigger>
-                    <PopoverContent className="min-w-200 min-h-100">
+                    <PopoverContent className="min-w-150 min-h-100 font-mono text-amber-500 bg-black">
                         {config}
                     </PopoverContent>
                 </Popover>

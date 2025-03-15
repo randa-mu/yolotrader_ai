@@ -21,8 +21,7 @@ export const EpochCounter = (props: EpochCounterProps) => {
 
     return (
         <div>
-            <h1 className="text-3xl font-extrabold">Epoch: {props.epoch}</h1>
-            <p>{countdownMs / 1000}s remaining</p>
+            <h1 className="font-mono text-2xl font-semibold text-red-500">EPOCH {props.epoch}</h1>
         </div>
     )
 }
