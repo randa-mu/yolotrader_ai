@@ -1,19 +1,21 @@
 import * as React from "react"
-import {AppState} from "@/reducer/app-reducer"
 import {APP_CONFIG} from "@/config"
 import { EpochCounter } from "./EpochCounter"
 import { NewsData } from "@/data/news"
+import {ChainState} from "@/state/chain-reducer"
+import {AppState} from "@/state/app-reducer"
 
 type TradingViewProps = {
     state: AppState
+    chainState: ChainState
     priceData: Array<number>
     sentimentData: Array<NewsData>
-    epoch: number
+    epoch: bigint
     EPOCH_DURATION_MS: number
 }
 export const TradingHeader = (props: TradingViewProps) => {
-    const {treasury, orderBook} = props.state.balances
-    const tweet = props.sentimentData[props.sentimentData.length - 1] ?? ""
+    const orderBook = props.chainState.orderbook.balance
+    const treasury = props.chainState.treasury.balance
 
     return (
         <div className="w-full">

@@ -56,7 +56,7 @@ export const EpochHistory = (props: EpochHistoryProps) => {
         return consensusDecision;
       }
 
-      const result = getConsensusDecision(props.decision);
+      const result = getConsensusDecision(props.decisions);
 
     return (
         <>
@@ -65,7 +65,7 @@ export const EpochHistory = (props: EpochHistoryProps) => {
             <div className="flex gap-4 col-span-4 text-left">
             <div className="flex gap-2">
             {<IndicatorIcon value={props.decisions.get("human")}/>}
-            <span className={`${props.decision.get("human") === "NO ACTION" ? "text-neutral-500" : "text-amber-500"}`}>
+            <span className={`${props.decisions.get("human") === "NO ACTION" ? "text-neutral-500" : "text-amber-500"}`}>
                 Trader
             </span>
             </div>

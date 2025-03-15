@@ -12,16 +12,16 @@ type ActionButtonsProps = {
 
 const COUNTDOWN_MS = 100
 export const ActionButtons = (props: ActionButtonsProps) => {
-       const [countdownMs, setCountdownMs] = useState(props.msPerEpoch)
+       const [countdownMs, setCountdownMs] = useState(APP_CONFIG.msPerEpoch)
 
         useEffect(() => {
-            setCountdownMs(props.msPerEpoch)
+            setCountdownMs(APP_CONFIG.msPerEpoch)
             const intervalId = setInterval(
                 () => setCountdownMs((c) => c - COUNTDOWN_MS),
                 COUNTDOWN_MS
             )
             return () => clearInterval(intervalId)
-        }, [props.epoch, props.msPerEpoch])
+        }, [props.epoch])
 
     const [choiceMade, setChoiceMade] = useState(false)
 

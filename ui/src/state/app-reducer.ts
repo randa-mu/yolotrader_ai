@@ -11,7 +11,7 @@ export const createNewEpochAction = (dispatch: Dispatch<AppAction>) => (epoch: b
 
 export type AgentDecisionAction = { type: "agent_action", agent: Agent, decision: Decision }
 export type Agent = "human" | "risk" | "liquidity"
-export type Decision = "BUY" | "SELL" | "HODL"
+export type Decision = "BUY" | "SELL" | "HODL" | "NO ACTION"
 
 export const createAgentDecision = (dispatch: Dispatch<AppAction>) => (agent: Agent, decision: Decision)  => {
     dispatch({type: "agent_action", agent, decision})
@@ -28,7 +28,7 @@ export type HistoryEntry = {
 }
 
 const initialCurrent: [string, Decision][] = Object.entries({
-    human: "HODL", risk: "HODL", liquidity: "HODL"
+    human: "NO ACTION", risk: "HODL", liquidity: "HODL"
 })
 
 export const initialDecisionState = {

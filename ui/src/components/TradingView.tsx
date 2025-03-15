@@ -1,7 +1,8 @@
 import * as React from "react"
 import {CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from "recharts"
-import {AppState} from "@/reducer/app-reducer"
 import { NewsData } from "@/data/news"
+import {ChainState} from "@/state/chain-reducer"
+import {AppState} from "@/state/app-reducer"
 
 type TradingViewProps = {
     appState: AppState
