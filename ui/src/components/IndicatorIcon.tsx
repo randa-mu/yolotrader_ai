@@ -14,7 +14,7 @@ export function IndicatorIcon(props: IconProps) {
         case "SELL":
             return <p className={`${className} + text-red-500`}>⏷</p>
         case "NO ACTION":
-             return <p className={`${className} + text-neutral-200`}>—</p>
+             return <p className={`${className} + text-neutral-500`}>—</p>
         default:
             return <p className={`${className} + text-yellow-500`}>⊖</p>
     }

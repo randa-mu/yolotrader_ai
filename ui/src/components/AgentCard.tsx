@@ -46,8 +46,8 @@ export const AgentCard = (props: AgentCardProps) => {
 
     return (
         <div className="flex-col p-2 min-h-20 min-w-20 text-left font-mono align-middle">
-            <div className="flex items-center justify-center">
-                <div className="w-32 h-20 flex flex-col items-center justify-center">
+            <div className="h-40 flex items-center justify-center">
+                <div className="w-32 flex flex-col items-center justify-center">
                         {props.isLoading
                             ? <LoadingSpinner/>
                             : content
@@ -57,7 +57,7 @@ export const AgentCard = (props: AgentCardProps) => {
 
                 <div className="flex-1 text-amber-500 font-mono ml-4">     
                     {reason && (
-                        <div className="text-m">
+                        <div className="text-sm">
                         {reason}
                         </div>
                     )}

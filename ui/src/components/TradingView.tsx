@@ -30,7 +30,8 @@ export const TradingView = (props: TradingViewProps) => {
             </div>
             <div className="w-full h-120 overflow-y-auto">
 
-            <div className="flex flex-col-reverse">
+
+            <div className="flex flex-col overflow-auto">
                 {[...newsItems].reverse().map((item, index) => (
                     <div
                     key={`${item.source}-${item.epoch}-${index}`}
@@ -78,28 +79,28 @@ function PriceChart(props: PriceChartProps) {
                         angle: 0,
                         style: {
                             fontFamily: "monospace",
-                            fill: "#303030",
+                            fill: "#d97706",
                             textAnchor: "middle"
                         }
                     }}
                     stroke="#666666"
-                    tick={{ fill: "#303030", fontFamily: "monospace" }}
+                    tick={{ fill: "#d97706", fontFamily: "monospace" }}
                 />
                 <YAxis
                     label={{
                         value: "Price",
                         angle: -90,
                         position: "insideLeft",
-                        offset: 20,
+                        offset: 10,
                         style: {
                             fontFamily: "monospace",
-                            fill: "#303030",
+                            fill: "#d97706",
                             textAnchor: "middle"
                         }
                     }}
                     width={60}
                     stroke="#666666"
-                    tick={{ fill: "##333333", fontFamily: "monospace", textAnchor: "start", angle: 0, dx: -10 }}
+                    tick={{ fill: "#d97706", fontFamily: "monospace", textAnchor: "start", angle: 0, dx: -30 }}
                 />
                 <Tooltip
                     contentStyle={{
@@ -109,6 +110,8 @@ function PriceChart(props: PriceChartProps) {
                         color: '#d97706'
                     }}
                     itemStyle={{ color: '#d97706' }}
+                    formatter={(value) => [`${value}`, 'Price']}
+                    labelFormatter={() => ''}
                 />
                 <Line
                     type="monotone"
