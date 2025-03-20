@@ -12,7 +12,6 @@ type TradingViewProps = {
 }
 export const TradingView = (props: TradingViewProps) => {
     const newsItems = props.sentimentData
-    console.log(newsItems)
 
     return (
         <div className="basis-3/5 h-full flex flex-col border border-neutral-800 overflow-hidden text-left text-sm">

@@ -4,9 +4,9 @@ export type AppAction = RestartAction | NewEpochAction | AgentDecisionAction
 
 type RestartAction = { type: "restart" }
 
-type NewEpochAction = { type: "new_epoch", epoch: bigint }
+type NewEpochAction = { type: "on_new_epoch", epoch: bigint }
 export const createNewEpochAction = (dispatch: Dispatch<AppAction>) => (epoch: bigint) => {
-    dispatch({type: "new_epoch", epoch: BigInt(epoch)})
+    dispatch({type: "on_new_epoch", epoch: BigInt(epoch ?? 0)})
 }
 
 export type AgentDecisionAction = { type: "agent_action", agent: Agent, decision: Decision }
@@ -45,7 +45,7 @@ export const appReducer = (state: AppState, action: AppAction) => {
         case "agent_action":
             return {...state, current: state.current.set(action.agent, action.decision)}
 
-        case "new_epoch":
+        case "on_new_epoch":
             if (state.epoch === 0n) {
                 return {
                     epoch: action.epoch,

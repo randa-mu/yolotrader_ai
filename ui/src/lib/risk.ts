@@ -36,7 +36,7 @@ const openai = new OpenAI({
     dangerouslyAllowBrowser: true
 })
 
-export async function runRiskAnalysis(abortController: AbortController, chainState: ChainState, treasuryPolicy: string): Promise<RiskAnalysis> {
+export async function runRiskAnalysis(chainState: ChainState, treasuryPolicy: string): Promise<RiskAnalysis> {
     const thread = await openai.beta.threads.create()
     await openai.beta.threads.messages.create(thread.id, {
         role: "user",
@@ -55,7 +55,7 @@ export async function runRiskAnalysis(abortController: AbortController, chainSta
         ]
     })
 
-    await waitForRun(abortController, thread, run.id, chainState, treasuryPolicy)
+    await waitForRun(thread, run.id, chainState, treasuryPolicy)
 
     const json = await extractLatestResponse(thread)
     if (json === "") {
@@ -70,23 +70,20 @@ export async function runRiskAnalysis(abortController: AbortController, chainSta
     }
 }
 
-async function waitForRun(abortController: AbortController, thread: Thread, runId: string, chainState: ChainState, treasuryPolicy: string): Promise<void> {
+async function waitForRun(thread: Thread, runId: string, chainState: ChainState, treasuryPolicy: string): Promise<void> {
     let runs = 0
     while (runs < APP_CONFIG.inferenceRetries) {
-        if (abortController.signal.aborted) {
-            throw new Error("aborted!")
-        }
         const run = await openai.beta.threads.runs.retrieve(thread.id, runId)
-        if (run.status === "completed") {
-            return
-        }
         if (run.status === "failed" || run.status === "cancelled") {
             const msg = `error running risk analysis for epoch ${chainState.epoch}`
             console.error(msg, run.last_error)
             throw new Error(msg)
-        }
 
-        if (run.status === "requires_action" && run.required_action?.submit_tool_outputs) {
+        } else if (run.status === "completed") {
+            return
+
+        // requires action should iterate again after submitting tool output
+        } else if (run.status === "requires_action" && run.required_action?.submit_tool_outputs) {
             await submitToolOutput(thread, run, chainState, treasuryPolicy)
         }
 

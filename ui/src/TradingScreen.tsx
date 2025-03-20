@@ -17,6 +17,7 @@ import {
     initialDecisionState
 } from "@/state/app-reducer"
 import {useBlockchain} from "./state/useBlockchain"
+import {tradeIfNecessary} from "@/lib/trade"
 
 const EPOCH_DURATION_MS = 15000
 
@@ -55,7 +56,6 @@ function TradingScreen() {
     const [appState, appDispatch] = useReducer(appReducer, initialDecisionState)
     const [chainState] = useBlockchain()
     const [gameStarted, setGameStarted] = useState(false)
-    const epoch = appState.epoch
     const finalBalance = chainState.orderbook.balance
 
     function getBalanceMessage(finalBalance) {
@@ -90,15 +90,11 @@ function TradingScreen() {
 
     // we propagate epochs between the states and update the price/sentiment data
     useEffect(() => {
+        // we trade before setting the new app state around epoch (so it doesn't reset)
+        tradeIfNecessary(chainState, appState)
+            .then(tx => console.log(`tx sent with hash ${tx}`))
         onNextEpoch(chainState.epoch)
     }, [chainState.epoch])
-
-    useEffect(() => {
-        if (gameStarted) {
-            const timerId = setTimeout(onNextEpoch, EPOCH_DURATION_MS)
-            return () => clearTimeout(timerId)
-        }
-    }, [epoch, gameStarted])
 
     const StartScreen = () => {
         const message = introMessages[Math.floor(Math.random() * introMessages.length)];
@@ -150,8 +146,9 @@ function TradingScreen() {
         return (
 
             <div className="fixed inset-0 flex-col items-center justify-center z-50 bg-black bg-opacity-90">
-                <header className="top-0 w-full flex flex-row content-start p-4 px-8 text-left font-display text-2xl font-semibold text-white">
-                    <img src={RandamuLogo} alt="Icon" className="w-10 h-10" />
+                <header
+                    className="top-0 w-full flex flex-row content-start p-4 px-8 text-left font-display text-2xl font-semibold text-white">
+                    <img src={RandamuLogo} alt="Icon" className="w-10 h-10"/>
                     <span className="ml-3">randamu</span>
                     <span className="ml-3 font-medium">| Yolotrader-AI</span>
                 </header>
@@ -179,7 +176,7 @@ function TradingScreen() {
         return <StartScreen/>
     }
 
-    if (epoch >= PRICE_DATA.price_data.length) {
+    if (chainState.epoch >= PRICE_DATA.price_data.length) {
         return <GameOverScreen isBankrupt={false}/>
     }
 
@@ -188,11 +185,11 @@ function TradingScreen() {
     }
 
     const priceData = PRICE_DATA.price_data
-        .filter(it => it.epoch <= epoch)
+        .filter(it => it.epoch <= chainState.epoch)
         .map(it => it.price)
 
     const sentimentData = NEWS_DATA
-        .filter(it => it.epoch <= epoch)
+        .filter(it => it.epoch <= chainState.epoch)
         .map(it => it)
 
     return (
@@ -213,12 +210,12 @@ function TradingScreen() {
                                 chainState={chainState}
                                 priceData={priceData}
                                 sentimentData={sentimentData}
-                                epoch={epoch}
+                                epoch={chainState.epoch}
                                 EPOCH_DURATION_MS={EPOCH_DURATION_MS}
                             />
                             <div className="w-full h-full flex gap-2">
                                 <TradingView
-                                    state={appState}
+                                    appState={appState}
                                     chainState={chainState}
                                     priceData={priceData}
                                     sentimentData={sentimentData}
@@ -237,7 +234,7 @@ function TradingScreen() {
                                             <span className="">Trader actions</span>
                                         </div>
                                         <ActionButtons
-                                            epoch={epoch}
+                                            epoch={chainState.epoch}
                                             onBuy={() => onAgentAction("human", "BUY")}
                                             onSell={() => onAgentAction("human", "SELL")}
                                             onNoAction={() => onAgentAction("human", "HODL")}
@@ -264,7 +261,7 @@ function TradingScreen() {
                 <img
                     src="/trader.png"
                     alt="Trader"
-                    className="absolute bottom-0 left-1/2 transform -translate-x-1/2 z-10 w-[1500px] h-auto max-w-none pointer-events-none"
+                    className="absolute bottom-0 left-1/2 transform -translate-x-1/2 z-10 w-[1200px] h-auto max-w-none pointer-events-none"
                 />
             </main>
         </div>
