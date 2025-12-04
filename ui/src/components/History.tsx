@@ -14,18 +14,59 @@ export const History = (props: HistoryProps) => {
         )
     }
     const reversedHistory = props.history.slice().toReversed()
+    const PAGE_SIZE = 5
+    const [page, setPage] = React.useState(1)
+    const totalPages = Math.max(1, Math.ceil(reversedHistory.length / PAGE_SIZE))
+
+    // When new history entries are added, jump back to the first (latest) page
+    React.useEffect(() => {
+        setPage(1)
+    }, [props.history.length])
+
+    React.useEffect(() => {
+        if (page > totalPages) {
+            setPage(totalPages)
+        }
+    }, [page, totalPages])
+
+    const start = (page - 1) * PAGE_SIZE
+    const pageHistory = reversedHistory.slice(start, start + PAGE_SIZE)
+
     return (
         <div className="flex flex-col space-y-2 justify-center p-2">
 
 
-            <div className="grid grid-cols-8 justify-center overflow-scroll text-amber-500 font-mono ">
-                {reversedHistory.map((entry) =>
+            <div className="grid grid-cols-8 justify-center overflow-y-auto text-amber-500 font-mono ">
+                {pageHistory.map((entry) =>
                     <EpochHistory
                         key={entry.epoch}
                         epoch={entry.epoch}
                         decisions={entry.decisions}
                     />
                 )}
+            </div>
+            <div className="mt-2 flex items-center justify-between text-xs md:text-sm text-neutral-400">
+                <span>
+                    Page {page} of {totalPages}
+                </span>
+                <div className="flex gap-2">
+                    <button
+                        type="button"
+                        className="px-2 py-1 rounded border border-neutral-700 bg-neutral-900/60 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-neutral-800/80"
+                        onClick={() => setPage((p) => Math.max(1, p - 1))}
+                        disabled={page === 1}
+                    >
+                        Prev
+                    </button>
+                    <button
+                        type="button"
+                        className="px-2 py-1 rounded border border-neutral-700 bg-neutral-900/60 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-neutral-800/80"
+                        onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                        disabled={page === totalPages || reversedHistory.length === 0}
+                    >
+                        Next
+                    </button>
+                </div>
             </div>
         </div>
     )

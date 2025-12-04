@@ -1,8 +1,7 @@
 import * as React from "react"
 import {Decision} from "@/reducer/app-reducer"
-import {PropsWithChildren, ReactElement, ReactNode} from "react"
+import {PropsWithChildren, ReactElement, ReactNode, useState} from "react"
 import {LoadingSpinner} from "@/components/ui/LoadingSpinner"
-import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover"
 import {Button} from "@/components/ui/button"
 
 type AgentCardProps = {
@@ -16,6 +15,8 @@ export const AgentCard = (props: AgentCardProps) => {
     let config: ReactElement
     let content: ReactElement
     let reason: ReactElement
+
+    const [open, setOpen] = useState(false)
 
     React.Children.forEach(props.children, (child) => {
         if (!React.isValidElement(child)) {
@@ -65,14 +66,31 @@ export const AgentCard = (props: AgentCardProps) => {
             </div>
 
             <div className="flex">
-                <Popover>
-                    <PopoverTrigger asChild>
-                        <Button className="grow rounded-none bg-neutral-700 border-radius-0 text-black font-mono font-semibold" disabled={!config}>configure</Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="min-w-150 min-h-100 font-mono text-amber-500 bg-black">
-                        {config}
-                    </PopoverContent>
-                </Popover>
+                <Button 
+                    className="grow rounded-none bg-neutral-700 border-radius-0 text-black font-mono font-semibold" 
+                    disabled={!config}
+                    onClick={() => setOpen(true)}
+                >
+                    configure
+                </Button>
+                {open && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80" onClick={() => setOpen(false)}>
+                        <div 
+                            className="relative w-[90vw] min-w-[900px] max-w-5xl max-h-[80vh] overflow-y-auto rounded-2xl border border-primary/70 bg-black/95 p-6 text-amber-500"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <button
+                                type="button"
+                                onClick={() => setOpen(false)}
+                                className="absolute right-4 top-4 text-neutral-400 hover:text-neutral-200 text-xl leading-none"
+                                aria-label="Close"
+                            >
+                                ×
+                            </button>
+                            {config}
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     )

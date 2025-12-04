@@ -49,9 +49,9 @@ export const AgentRisk = (props: AgentRiskProps) => {
                 />
             </AgentCard.Content>
             <AgentCard.Configuration>
-                <div className="p-2 rounded-none">
+                <div className="p-2 rounded-none w-full min-w-[900px]">
                     <Textarea
-                        className="min-h-1/2 rounded-none"
+                        className="w-full min-w-[900px] min-h-1/2 rounded-none bg-black/90 text-amber-500 border border-primary/70"
                         rows={20}
                         value={stagedPolicy}
                         onChange={event => setStagedPolicy(event.target.value)}

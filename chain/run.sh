@@ -35,7 +35,7 @@ done
 
 EXPLORER_PORT=5100
 echo "[+] Starting block explorer on port $EXPLORER_PORT"
-docker stop otterscan > /dev/null
+docker stop otterscan > /dev/null 2>&1 || true
 docker run --rm -p $EXPLORER_PORT:80 --name otterscan -d otterscan/otterscan > /dev/null
 
 echo '[+] App running - run `tail -f anvil.log` to see the logs'
