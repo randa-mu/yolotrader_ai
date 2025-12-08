@@ -14,7 +14,7 @@ export const TradingView = (props: TradingViewProps) => {
     const newsItems = props.sentimentData
 
     return (
-        <div className="basis-3/5 h-full flex flex-col border border-neutral-800 overflow-hidden text-left text-sm">
+        <div className="basis-3/5 h-full flex flex-col border border-neutral-800 overflow-hidden text-left text-sm bg-black/40">
             <div className="w-full h-100">
                 <div className="w-full p-1 px-2 grid grid-cols-1 gap-2 bg-neutral-800 font-mono text-neutral-400">
                     <span className="col-span-1">$MOON tracker</span>
@@ -23,8 +23,8 @@ export const TradingView = (props: TradingViewProps) => {
                 <PriceChart priceData={props.priceData}/>
                 </div>
             </div>
-            <div className="w-full p-1 px-2 grid grid-cols-10 gap-2 bg-neutral-800 font-mono text-neutral-400">
-                <span className="col-span-1">Ticker</span>
+            <div className="w-full p-1 px-2 grid grid-cols-12 gap-2 bg-neutral-800 font-mono text-neutral-400">
+                <span className="col-span-2">Ticker</span>
                 <span className="col-span-6">News</span>
                 <span className="col-span-3">Source</span>
             </div>
@@ -36,11 +36,11 @@ export const TradingView = (props: TradingViewProps) => {
                     <div
                     key={`${item.source}-${item.epoch}-${index}`}
                     className={`
-                        px-2 grid grid-cols-10 gap-2 font-mono font-normal text-amber-500 p-1 border-b border-gray-800
+                        px-2 grid grid-cols-12 gap-2 font-mono font-normal text-amber-500 p-1 border-b border-gray-800
                         ${index === 0 ? 'animate-new-item' : ''}
                     `}
                     >
-                    <div className="col-span-1">MOON</div>
+                    <div className="col-span-2">MOON</div>
                     <div className="col-span-6">{item.content}</div>
                     <div className="col-span-3">{item.source}</div>
                     </div>
@@ -118,7 +118,7 @@ function PriceChart(props: PriceChartProps) {
                     dataKey="value"
                     stroke="#FFFFFF"
                     strokeWidth={1}
-                    dot={{r: 4, fill: "#000000", stroke: "#FFFFFF"}}
+                    dot={{r: 0, fill: "#000000", stroke: "#FFFFFF"}}
                 />
             </LineChart>
         </ResponsiveContainer>

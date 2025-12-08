@@ -33,10 +33,10 @@ export const History = (props: HistoryProps) => {
     const pageHistory = reversedHistory.slice(start, start + PAGE_SIZE)
 
     return (
-        <div className="flex flex-col space-y-2 justify-center p-2">
+        <div className="flex flex-col space-y-2 justify-center p-2 overflow-hidden">
 
 
-            <div className="grid grid-cols-8 justify-center overflow-y-auto text-amber-500 font-mono ">
+            <div className="grid grid-cols-8 justify-center text-amber-500 font-mono max-h-48 overflow-y-scroll">
                 {pageHistory.map((entry) =>
                     <EpochHistory
                         key={entry.epoch}

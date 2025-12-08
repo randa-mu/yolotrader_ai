@@ -7,7 +7,7 @@ export type IconProps = {
 }
 
 export function IndicatorIcon(props: IconProps) {
-    const className = props.size === "large" ? "text-2xl font-mono text-center align-middle" : "text-lg font-mono text-center align-middle"
+    const className = props.size === "large" ? "text-2xl font-mono text-center align-middle min-w-[32px]" : "text-lg font-mono text-center align-middle"
     switch (props.value) {
         case "BUY":
             return <p className={`${className} + text-green-500`}>⏶</p>

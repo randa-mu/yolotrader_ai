@@ -40,9 +40,6 @@ export const AgentLiquidity = (props: AgentLiquidityProps) => {
                     value={props.appState.current.get("liquidity")}
                 />
             </AgentCard.Content>
-            <AgentCard.Reasoning>
-                <p>Threshold was reached by the dcipher network</p>
-            </AgentCard.Reasoning>
         </AgentCard>
     )
 }

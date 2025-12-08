@@ -114,7 +114,7 @@ function TradingScreen() {
                     <span className="text-lg md:text-xl font-light text-muted ml-1">| YoloTrader-AI</span>
                 </header>
 
-                <main className="flex-1 flex flex-col lg:flex-row items-center justify-between px-8 md:px-16 lg:px-24 gap-12 lg:gap-24">
+                <main className="flex-1 flex flex-col lg:flex-row lg:items-center justify-between px-8 md:px-16 lg:px-24 lg: py-8 gap-0 lg:gap-24">
                     <section className="max-w-xl space-y-6 text-left">
                         <h1 className="font-funnel-display text-4xl md:text-5xl lg:text-6xl leading-tight text-brand-light">
                             YOLOTRADER AI
@@ -268,7 +268,7 @@ function TradingScreen() {
                     Exit
                 </button>
             </header>
-            <main className="flex-1 w-full pb-6">
+            <main className="flex-1 w-full pb-6 px-8 md:px-16">
                 <div className="w-full h-full">
                     <div className="w-full h-full">
                         <div className="w-full h-full flex flex-col">
@@ -280,14 +280,14 @@ function TradingScreen() {
                                 epoch={chainState.epoch}
                                 EPOCH_DURATION_MS={EPOCH_DURATION_MS}
                             />
-                            <div className="w-full h-full flex gap-3 md:gap-4 px-4 md:px-6 lg:px-8 pb-4">
+                            <div className="w-full h-full flex flex-col lg:flex-row gap-3 pb-4">
                                 <TradingView
                                     appState={appState}
                                     chainState={chainState}
                                     priceData={priceData}
                                     sentimentData={sentimentData}
                                 />
-                                <div className="flex-col basis-2/5 space-y-3">
+                                <div className="flex-col md:basis-2/5 space-y-3">
                                     <AgentView
                                         state={appState}
                                         chainState={chainState}
@@ -307,7 +307,7 @@ function TradingScreen() {
                                             onNoAction={() => onAgentAction("human", "HODL")}
                                         />
                                     </div>
-                                    <div className="basis-2/5 flex flex-col bg-black/40">
+                                    <div className="flex-1 flex flex-col bg-black/40 min-h-0">
                                     <span className="text-xl p-4 font-funnel-display font-bold">Transaction History</span>
                                         
                                         <div
