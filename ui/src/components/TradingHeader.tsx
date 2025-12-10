@@ -23,14 +23,14 @@ export const TradingHeader = (props: TradingViewProps) => {
             <div className="grid grid-cols-2 grid-rows-2 gap-4 font-mono text-left">
                 <div className="flex flex-col text-white">
                     <span className="text-xs md:text-sm text-muted">TREASURY BALANCE</span>
-                    <span className="text-xl md:text-2xl font-semibold text-white">
-                        {APP_CONFIG.token} {treasury.toLocaleString()}
+                    <span className="text-xl md:text-2xl font-semibold text-blue-500">
+                        {APP_CONFIG.token} {Number(treasury / (10n ** 18n)).toLocaleString()}  
                     </span>
                 </div>
 
                 <div className="flex flex-col text-white text-right">
                     <span className="text-xs md:text-sm text-muted">ORDER BOOK</span>
-                    <span className="text-xl md:text-2xl font-semibold text-white">
+                    <span className="text-xl md:text-2xl font-semibold text-blue-500">
                         {APP_CONFIG.token} {orderBook}
                     </span>
                 </div>
