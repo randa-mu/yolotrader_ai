@@ -16,7 +16,7 @@ type AgentViewProps = {
 
 export const AgentView = (props: AgentViewProps) => {
     return (
-        <div className="basis-2/5 flex flex-col border border-neutral-800">
+        <div className="basis-2/5 flex flex-col border border-neutral-800 bg-black/40">
             <div className="w-full p-1 px-2 gap-2 bg-neutral-800 font-mono text-sm text-left text-neutral-400">
                 <span className="">Agent advisory</span>
             </div>

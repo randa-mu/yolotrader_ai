@@ -24,9 +24,6 @@ export const AgentRisk = (props: AgentRiskProps) => {
     const [treasuryPolicy, setTreasuryPolicy] = useState(TREASURY_POLICY)
     const [stagedPolicy, setStagedPolicy] = useState(TREASURY_POLICY)
     const onAgentDecision = createAgentDecision(props.dispatch)
-    // used to abort risk analyses that take too long
-    const [abort, setAbort] = useState(new AbortController())
-
     const resetPolicies = () => {
         setStagedPolicy(TREASURY_POLICY)
         setTreasuryPolicy(TREASURY_POLICY)
@@ -34,11 +31,7 @@ export const AgentRisk = (props: AgentRiskProps) => {
 
     useEffect(() => {
         setLoading(true)
-        abort.abort()
-        const newAbortController = new AbortController()
-        setAbort(newAbortController)
-
-        runRiskAnalysis(newAbortController, props.chainState, treasuryPolicy)
+        runRiskAnalysis(props.chainState, treasuryPolicy)
             .then(result => {
                 onAgentDecision("risk", result.decision)
                 setReasoning(result.reason)
@@ -56,10 +49,10 @@ export const AgentRisk = (props: AgentRiskProps) => {
                 />
             </AgentCard.Content>
             <AgentCard.Configuration>
-                <div className="p-2 rounded-none">
+                <div className="p-2 rounded-none w-full">
                     <Textarea
-                        className="min-h-1/2 rounded-none"
-                        rows={20}
+                        className="w-full min-h-[200px] lg:min-h-1/2 rounded-none text-amber-500 border border-primary/70 text-sm"
+                        rows={15}
                         value={stagedPolicy}
                         onChange={event => setStagedPolicy(event.target.value)}
                     />

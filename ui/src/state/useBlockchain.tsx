@@ -1,7 +1,12 @@
 import {Dispatch, useEffect, useReducer} from "react"
 import {APP_CONFIG, WALLET} from "@/config"
 import {ThresholdWallet, ThresholdWallet__factory} from "@/generated"
-import {ChainAction, chainReducer, ChainState, initialChainState} from "@/state/chain-reducer"
+import {
+    ChainAction,
+    chainReducer,
+    ChainState,
+    initialChainState
+} from "@/state/chain-reducer"
 import {createNewEpochAction} from "@/state/chain-reducer"
 
 export function useBlockchain(): [ChainState, Dispatch<ChainAction>] {

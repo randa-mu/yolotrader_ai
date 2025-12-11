@@ -24,7 +24,7 @@ export type BalanceUpdate = {
     treasury: ThresholdWallet,
     orderbook: ThresholdWallet
 }
-const createBalanceUpdateAction = (dispatch: Dispatch<ChainAction>) =>
+export const createBalanceUpdateAction = (dispatch: Dispatch<ChainAction>) =>
     (treasury: ThresholdWallet, orderbook: ThresholdWallet) => dispatch({type: "balance_update", treasury, orderbook})
 
 export const initialChainState = {

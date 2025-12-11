@@ -1,7 +1,7 @@
 import * as React from "react"
 import {APP_CONFIG} from "@/config"
-import { EpochCounter } from "./EpochCounter"
-import { NewsData } from "@/data/news"
+import {EpochCounter} from "./EpochCounter"
+import {NewsData} from "@/data/news"
 import {ChainState} from "@/state/chain-reducer"
 import {AppState} from "@/state/app-reducer"
 
@@ -14,17 +14,36 @@ type TradingViewProps = {
     EPOCH_DURATION_MS: number
 }
 export const TradingHeader = (props: TradingViewProps) => {
-    const orderBook = props.chainState.orderbook.balance
-    const treasury = props.chainState.treasury.balance
+    const orderBook = props.chainState.orderbook.balance ?? 0n
+    const treasury = props.chainState.treasury.balance ?? 0n
+    console.log(orderBook)
 
     return (
-        <div className="w-full">
-            <div className="grid grid-cols-5 gap-2 p-1 font-mono text-2xl font-semibold text-left px-2">
-                <div className="text-white col-span-2 flex"><p>TREASURY BALANCE</p><span className="text-blue-500 ml-4">{APP_CONFIG.token} {treasury.toLocaleString()}</span></div>
-                
-                <div className="text-white col-span-2 flex"><p>ORDER BOOK</p><div className="text-blue-500 ml-4">{APP_CONFIG.token} {orderBook}</div></div>
-                <div className="col-span-1 text-right"> 
-                <EpochCounter epoch={props.epoch} msPerEpoch={props.EPOCH_DURATION_MS}/>
+        <div className="w-full py-1">
+            <div className="grid grid-cols-2 grid-rows-2 gap-4 font-mono text-left">
+                <div className="flex flex-col text-white">
+                    <span className="text-xs md:text-sm text-muted">TREASURY BALANCE</span>
+                    <span className="text-xl md:text-2xl font-semibold text-blue-500">
+                        {APP_CONFIG.token} {Number(treasury / (10n ** 18n)).toLocaleString()}  
+                    </span>
+                </div>
+
+                <div className="flex flex-col text-white text-right">
+                    <span className="text-xs md:text-sm text-muted">ORDER BOOK</span>
+                    <span className="text-xl md:text-2xl font-semibold text-blue-500">
+                        {APP_CONFIG.token} {orderBook}
+                    </span>
+                </div>
+
+                <div className="flex flex-col justify-end text-white">
+                    <span className="text-xs md:text-sm text-muted">EPOCH</span>
+                    <span className="text-xl md:text-2xl font-semibold">
+                        <EpochCounter epoch={props.epoch} msPerEpoch={props.EPOCH_DURATION_MS}/>
+                    </span>
+                </div>
+
+                <div className="flex flex-col justify-end text-white text-right">
+                    {/* Reserved for future metric or status to complete 2x2 grid */}
                 </div>
             </div>
         </div>
